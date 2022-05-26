@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rsr_m*!suezyk6zi09edy0jnw0%rbr##2&bl=ugt_0-r483kxc'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Mercado',
+    'MercadoSolidario'
 ]
 
 MIDDLEWARE = [
@@ -75,9 +77,27 @@ WSGI_APPLICATION = 'MercadoSolidario.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),   # Or an IP Address that your database is hosted on
+        'PORT': '3306',
+        #optional:
+        'OPTIONS': {
+            'charset' : 'utf8',
+            'use_unicode' : True,
+             'init_command': 'SET '
+                #'storage_engine=INNODB,'
+                'character_set_connection=utf8,'
+                'collation_connection=utf8_bin'
+                #'sql_mode=STRICT_TRANS_TABLES,'    # see note below
+                #'SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+        },
+        'TEST_CHARSET': 'utf8',
+        'TEST_COLLATION': 'utf8_general_ci',
     }
+
 }
 
 
@@ -103,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'UTC'
 

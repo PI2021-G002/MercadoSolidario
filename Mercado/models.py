@@ -3,22 +3,22 @@ from django.db import models
 
 # Create your models here.
 
+class Categoria(models.Model):
+    categoria = models.CharField(max_length=50)
+    def __str__(self):
+        return self.categoria
+
 class ProdutoSolidario(models.Model):
     produto = models.CharField(max_length=50)
     preco = models.FloatField()
-    def __str__(self):
-        return self.produto
-
-class Categoria(models.Model):
-    categoria = models.CharField(max_length=50)
     quantidade = models.IntegerField()
-    id_produto = models.ForeignKey(
-       ProdutoSolidario,
+    id_categoria = models.ForeignKey(
+       Categoria,
        on_delete = models.DO_NOTHING
     )
     unidade = models.CharField(max_length=50)
     def __str__(self):
-        return self.grupo
+        return self.Produto
 
 class ProdutoSolidarioCodigoDeBarras(models.Model):
     id_produto = models.ForeignKey(
@@ -27,6 +27,9 @@ class ProdutoSolidarioCodigoDeBarras(models.Model):
     )
     codigo_barras = models.BigIntegerField() 
 
+class FontesDoacao(models.Model):
+    nome = models.CharField(max_length=50)
+    
 class Estoque(models.Model):
     id_codigo = models.ForeignKey(
        ProdutoSolidarioCodigoDeBarras,
@@ -34,6 +37,7 @@ class Estoque(models.Model):
     )
     quantidade = models.IntegerField()
     validade = models.DateField(auto_now=False, auto_now_add=False) 
+    fonte = 
 
 class Atendimento(models.Model):
     tipo = models.CharField(max_length=50)
