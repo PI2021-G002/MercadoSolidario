@@ -9,16 +9,15 @@ class Categoria(models.Model):
         return self.categoria
 
 class ProdutoSolidario(models.Model):
-    produto = models.CharField(max_length=50)
     preco = models.FloatField()
     quantidade = models.IntegerField()
     id_categoria = models.ForeignKey(
        Categoria,
        on_delete = models.DO_NOTHING
     )
-    unidade = models.CharField(max_length=50)
-    def __str__(self):
-        return self.Produto
+    unidade = models.CharField(max_length=10)
+#    def __str__(self):
+#        return (self.id_categoria + " " + str( self.quantidade) + self.unidade)
 
 class ProdutoSolidarioCodigoDeBarras(models.Model):
     id_produto = models.ForeignKey(
@@ -37,8 +36,11 @@ class Estoque(models.Model):
     )
     quantidade = models.IntegerField()
     validade = models.DateField(auto_now=False, auto_now_add=False) 
-    fonte = 
-
+    fonte = models.ForeignKey(
+       FontesDoacao,
+       on_delete = models.DO_NOTHING
+    )
+ 
 class Atendimento(models.Model):
     tipo = models.CharField(max_length=50)
     atendente = models.CharField(max_length=50)

@@ -1,0 +1,36 @@
+
+
+sudo apt install git
+sudo apt install python3-pip
+sudo apt install python3-venv
+sudo apt install mariadb-server
+sudo apt install mariadb-client
+sudo apt install libmysqlclient-dev
+sudo apt install python3-mysql
+sudo apt install python3-mysqldb
+sudo apt install python3-mysql.connector 
+sudo apt install python3-mysqldb-dbg 
+
+pip3 install django
+
+pip3 install mysqlclient
+
+----
+To make mysql work with django/python3
+
+https://stackoverflow.com/questions/454854/no-module-named-mysqldb
+
+pip install wheel
+pip install pymysql
+
+in settings.py
+
+import pymysql
+pymysql.install_as_MySQLdb()
+
+----
+
+python3 manage.py migrate
+python3 manage.py createsuperuser
+
+----

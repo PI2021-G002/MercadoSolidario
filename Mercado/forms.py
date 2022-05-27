@@ -3,7 +3,7 @@ from django.forms.models import ModelForm
 from .models import Estoque,ItensAtendimento,Atendimento,ProdutoSolidarioCodigoDeBarras,ProdutoSolidario,Categoria
 
 class FormAtendimento(forms.Form):
-    produto = forms.ModelChoiceField(queryset=ProdutoSolidario.objects.all().order_by('produto'))
+    id_produto = forms.ModelChoiceField(queryset=ProdutoSolidario.objects.all())
     dataValidade = forms.DateTimeField(required=True,widget=forms.SelectDateWidget(),label='Data')
     quantidade =forms.IntegerField(required=True)
     
