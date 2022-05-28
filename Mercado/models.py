@@ -1,4 +1,4 @@
-from socket import TIPC_CONN_TIMEOUT
+#from socket import TIPC_CONN_TIMEOUT
 from django.db import models
 
 # Create your models here.

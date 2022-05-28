@@ -28,9 +28,22 @@ in settings.py
 import pymysql
 pymysql.install_as_MySQLdb()
 
+pip install -U selenium
+
+Selenium drive configurate
+https://selenium-python.readthedocs.io/installation.html#drivers
+
 ----
 
 python3 manage.py migrate
 python3 manage.py createsuperuser
+
+Run all tests
+python manage.py test --pattern="tests_*.py"
+
+Run a test
+Sample: python manage.py test <Módulo>.<pasta>.tests_models
+
+python manage.py test Mercado.tests.tests_models
 
 ----
