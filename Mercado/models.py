@@ -1,15 +1,10 @@
-from mailbox import NotEmptyError
-from socket import TIPC_CONN_TIMEOUT
 from django.db import models
-
-# Create your models here.
 
 class Categoria(models.Model):
     categoria = models.CharField(max_length=50)
     def __str__(self):
         return self.categoria
-
-        
+    
 class ProdutoSolidario(models.Model):
     id_categoria = models.ForeignKey(
        Categoria,
@@ -57,7 +52,11 @@ class ItensAtendimentoRascunho(models.Model):
     )
     quantidade = models.IntegerField()
     validade = models.DateField(auto_now=False, auto_now_add=False) 
-
+    fonte = models.ForeignKey(
+       FontesDoacao,
+       on_delete = models.DO_NOTHING
+    )
+ 
 class Atendimento(models.Model):
     tipo = models.CharField(max_length=50)
     atendente = models.CharField(max_length=50)
