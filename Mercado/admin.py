@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Categoria, ProdutoSolidario, ProdutoSolidarioCodigoDeBarras, FontesDoacao
+from .models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoacao
 
 class CategoriaAdmin(admin.ModelAdmin):
     fields = ['categoria']
@@ -10,20 +10,20 @@ class CategoriaAdmin(admin.ModelAdmin):
 admin.site.register(Categoria,CategoriaAdmin)
 
 class ProdutoSolidarioAdmin(admin.ModelAdmin):
-    fields =['id_categoria','quantidade','unidade','preco']
-    list_display = ('id','id_categoria','quantidade','unidade')
+    fields =['id_categoria','quantidade','unidade','preco_solidario','estoque_minimo','max_familia']
+    list_display = ('id','id_categoria','quantidade','unidade','estoque_minimo','preco_solidario','max_familia')
 
 admin.site.register(ProdutoSolidario,ProdutoSolidarioAdmin)
 
-class ProdutoSolidarioCodigoDeBarrasAdmin(admin.ModelAdmin):
+class CodBarProdSolAdmin(admin.ModelAdmin):
     fields =['id_produto','codigo_barras']
     list_display = ('id','id_produto','codigo_barras')
 
-admin.site.register(ProdutoSolidarioCodigoDeBarras,ProdutoSolidarioCodigoDeBarrasAdmin)
+admin.site.register(CodBarProdSol,CodBarProdSolAdmin)
 
 class FontesDoacaoAdmin(admin.ModelAdmin):
     fields =['nome']
     list_display = ('id','nome')
 
-admin.site.register(FontesDoacao,FontesDoacaoAdmin)
+admin.site.register(FonteDoacao,FontesDoacaoAdmin)
 

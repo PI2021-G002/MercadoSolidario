@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.utils.formats import date_format
-from .models import Estoque, Atendimento,ItensAtendimento,ProdutoSolidario,FontesDoacao,ProdutoSolidarioCodigoDeBarras
+from .models import Estoque, Atendimento,ItensAtendimento,ProdutoSolidario,FonteDoacao,CodBarProdSol
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
