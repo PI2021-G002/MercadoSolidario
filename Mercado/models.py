@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 class Categoria(models.Model):
@@ -13,6 +14,8 @@ class ProdutoSolidario(models.Model):
     quantidade = models.IntegerField()
     unidade = models.CharField(max_length=20)
     preco_solidario = models.FloatField()
+    estoque_minimo = models.IntegerField(default=0)
+    max_familia = models.IntegerField(default=0)
     def __str__(self):
         return str(self.id_categoria) + " " + str(self.quantidade) + self.unidade 
 
@@ -21,7 +24,7 @@ class CodBarProdSol(models.Model):
        ProdutoSolidario,
        on_delete = models.PROTECT
     )
-    codigo_barras = models.BigIntegerField() 
+    codigo_barras = models.BigIntegerField(unique=True) 
 
 class FonteDoacao(models.Model):
     nome = models.CharField(max_length=50)
@@ -53,7 +56,7 @@ class ItensAtendimentoRascunho(models.Model):
     quantidade = models.IntegerField()
     validade = models.DateField(auto_now=False, auto_now_add=False) 
     fonte = models.ForeignKey(
-       FontesDoacao,
+       FonteDoacao,
        on_delete = models.DO_NOTHING
     )
  
@@ -80,7 +83,7 @@ class AtendimentoTemplate(models.Model):
 
 class ItensAtendimentoTemplate(models.Model):
     id_atendimento = models.ForeignKey(
-       AtendimentoTemplate
+       AtendimentoTemplate,
        on_delete = models.DO_NOTHING
     )
     id_codigo = models.ForeignKey(
