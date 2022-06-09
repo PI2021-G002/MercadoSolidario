@@ -1,5 +1,5 @@
 from django.test import TestCase
-from Mercado.models import Categoria, ProdutoSolidario, ProdutoSolidarioCodigoDeBarras, FontesDoacao, Estoque, Atendimento, ItensAtendimento
+from Mercado.models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoacao, Estoque, Atendimento, ItensAtendimento
 import datetime
 from django.utils import timezone
 
@@ -11,9 +11,9 @@ class BaseModelTestCase(TestCase):
 		cls.categoria.save()
 		cls.produto_solidario = ProdutoSolidario(preco=70, quantidade=15, id_categoria=cls.categoria, unidade='kg')
 		cls.produto_solidario.save()
-		cls.produto_barras = ProdutoSolidarioCodigoDeBarras(id_produto=cls.produto_solidario, codigo_barras=123123123)
+		cls.produto_barras = CodBarProdSol(id_produto=cls.produto_solidario, codigo_barras=123123123)
 		cls.produto_barras.save()
-		cls.fonte_doacao = FontesDoacao(nome='Loja Atacado')
+		cls.fonte_doacao = FonteDoacao(nome='Loja Atacado')
 		cls.fonte_doacao.save()
 		cls.estoque = Estoque(id_codigo=cls.produto_barras, quantidade=10, validade=datetime.datetime.now(tz=timezone.utc), fonte=cls.fonte_doacao)
 		cls.estoque.save()
@@ -40,23 +40,23 @@ class ProdutoSolidarioModelTestCase(BaseModelTestCase):
 		self.assertEqual('kg', ProdutoSolidario.objects.filter(unidade__contains='kg').values_list().get()[4])
 		
 		
-class ProdutoSolidarioCodigoDeBarrasModelTestCase(BaseModelTestCase):
+class CodBarProdSolModelTestCase(BaseModelTestCase):
 	def test_produto_solidario_codigo_barras_model(self):
 		#Testa o relacionamento TODO Refatorar
 		id_produto_cb = ProdutoSolidario.objects.filter(unidade__contains='kg').values_list().get()[3]
-		id_produto_com_barras = ProdutoSolidarioCodigoDeBarras.objects.filter().values_list().get()[1]
+		id_produto_com_barras = CodBarProdSol.objects.filter().values_list().get()[1]
 		
 		self.assertEqual(id_produto_com_barras, id_produto_cb)
 		
 		self.assertEqual(123123123, self.produto_barras.codigo_barras)
 		
-class FontesDoacaoModelTestCase(BaseModelTestCase):
+class FonteDoacaoModelTestCase(BaseModelTestCase):
 	def test_fonte_doacao_model(self):
 		self.assertEqual('Loja Atacado', self.fonte_doacao.nome)
 		
 	def test_fonte_doacao_retorna_valores(self):
-		self.assertEqual(1, len(FontesDoacao.objects.filter()))
-		self.assertEqual('Loja Atacado', FontesDoacao.objects.filter(nome__contains='Loja Atacado').values_list().get()[1])
+		self.assertEqual(1, len(FonteDoacao.objects.filter()))
+		self.assertEqual('Loja Atacado', FonteDoacao.objects.filter(nome__contains='Loja Atacado').values_list().get()[1])
 		
 class EstoqueModelTestCase(BaseModelTestCase):
 	def test_estoque_model(self):
@@ -81,5 +81,5 @@ class ItensAtendimentoModelTestCase(BaseModelTestCase):
 		self.assertEqual(10, self.items_atendimento.quantidade)
 			
 	def test_items_atendimento_retorna_valores(self):
-		id_estoque_produto_codigo_barras = ProdutoSolidarioCodigoDeBarras.objects.filter().values_list().get()[0]
+		id_estoque_produto_codigo_barras = CodBarProdSol.objects.filter().values_list().get()[0]
 		self.assertEqual(5, id_estoque_produto_codigo_barras)

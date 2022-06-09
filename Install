@@ -47,3 +47,7 @@ Sample: python manage.py test <Módulo>.<pasta>.tests_models
 python manage.py test Mercado.tests.tests_models
 
 ----
+add in para ler codigos de barra e qrcode
+
+https://github.com/mebjas/html5-qrcode
+
