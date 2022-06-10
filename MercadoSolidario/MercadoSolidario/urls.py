@@ -15,17 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from django.views.generic import TemplateView
-from Mercado.views import *
-
-admin.site.site_header = "Administração do Mercado"
-admin.site.site_title  = "Administração do Mercado"
-admin.site.index_title = "Mercado Solidário"
-admin.site.site_url = "/Mercado/"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('Mercado/',include('Mercado.urls')),
-    path('ajuda/',TemplateView.as_view(template_name='ajuda.html'), name='Ajuda'),
 ]
-
