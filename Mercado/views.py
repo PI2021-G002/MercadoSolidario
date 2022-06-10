@@ -14,4 +14,3 @@ from django.contrib import messages
 def logout_view(request):
     logout(request)
     return render(request,'index.html')
-
