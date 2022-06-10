@@ -12,6 +12,7 @@ admin.site.register(Categoria,CategoriaAdmin)
 class ProdutoSolidarioAdmin(admin.ModelAdmin):
     fields =['id_categoria','quantidade','unidade','preco_solidario','estoque_minimo','max_familia']
     list_display = ('id','id_categoria','quantidade','unidade','estoque_minimo','preco_solidario','max_familia')
+    verbose_name = "produtos solidários"
 
 admin.site.register(ProdutoSolidario,ProdutoSolidarioAdmin)
 
@@ -22,8 +23,7 @@ class CodBarProdSolAdmin(admin.ModelAdmin):
 admin.site.register(CodBarProdSol,CodBarProdSolAdmin)
 
 class FontesDoacaoAdmin(admin.ModelAdmin):
-    fields =['nome','descricao']
-    list_display = ('id','nome','descricao')
+    fields =['nome']
+    list_display = ('id','nome')
 
 admin.site.register(FonteDoacao,FontesDoacaoAdmin)
-

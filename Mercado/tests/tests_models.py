@@ -1,5 +1,6 @@
 from django.test import TestCase
 from Mercado.models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoacao, Estoque, Atendimento, ItensAtendimento, AtendimentoRascunho, ItensAtendimentoRascunho, AtendimentoTemplate, ItensAtendimentoTemplate
+
 import datetime
 from django.utils import timezone
 
@@ -13,7 +14,11 @@ class BaseModelTestCase(TestCase):
 		cls.produto_solidario.save()
 		cls.produto_barras = CodBarProdSol(id_produto=cls.produto_solidario, codigo_barras=123123123)
 		cls.produto_barras.save()
-		cls.fonte_doacao = FonteDoacao(nome='Loja Atacado', descricao='Mercado de alimentos')
+
+#		cls.fonte_doacao = FonteDoacao(nome='Loja Atacado', descricao='Mercado de alimentos')
+
+		cls.fonte_doacao = FonteDoacao(nome='Loja Atacado')
+
 		cls.fonte_doacao.save()
 		cls.estoque = Estoque(id_codigo=cls.produto_barras, quantidade=10, validade=datetime.datetime.now(tz=timezone.utc), id_fonte=cls.fonte_doacao)
 		cls.estoque.save()
@@ -51,12 +56,14 @@ class CodBarProdSolModelTestCase(BaseModelTestCase):
 	def test_produto_solidario_codigo_barras_model(self):
 		#Testa o relacionamento TODO Refatorar
 		id_produto_cb = ProdutoSolidario.objects.filter(unidade__contains='kg').values_list().get()[1]
+
 		id_produto_com_barras = CodBarProdSol.objects.filter().values_list().get()[1]
 		
 		self.assertEqual(id_produto_com_barras, id_produto_cb)
 		
 		self.assertEqual(123123123, self.produto_barras.codigo_barras)
-	
+
+
 class FonteDoacaoModelTestCase(BaseModelTestCase):
 	def test_fonte_doacao_model(self):
 		self.assertEqual('Loja Atacado', self.fonte_doacao.nome)
@@ -89,6 +96,7 @@ class ItensAtendimentoModelTestCase(BaseModelTestCase):
 			
 	def test_items_atendimento_retorna_valores(self):
 		id_estoque_produto_codigo_barras = CodBarProdSol.objects.filter().values_list().get()[0]
+
 		self.assertEqual(8, id_estoque_produto_codigo_barras)
 		
 class AtendimentoRascunhoModelTestCase(BaseModelTestCase):
@@ -119,6 +127,6 @@ class ItensAtendimentoTemplateModelTestCase(BaseModelTestCase):
 		
 	def test_itens_atend_template_retorna_valores(self):
 		self.assertEqual(2, ItensAtendimentoTemplate.objects.filter(quantidade__contains='2').values_list().get()[3])
-		
 
-		
+		self.assertEqual(5, id_estoque_produto_codigo_barras)
+
