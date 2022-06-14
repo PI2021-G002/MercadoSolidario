@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <h2>Listagem de Estoque - Mercado Solidário CS</h2>
+    </div>
+	</div>
+	<div class="row">
+    <div class="col">
+      <table id='tbProdutos' class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+        <thead> 
+                <tr>
+                    <th>Produto</th>
+                    <th scope="col">Data de Validade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produto in estoque %}
+                <tr>
+                    <td>{{ produto.id_produto }}</td>
+                    <td>{{ produto.quantidade }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script lang="javascript">
+          $(document).ready( function () {
+              var table = $('#tbProdutos').DataTable( {
+                  language: {
+                  url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                  },
+                  responsive : true
+              } )
+              .columns.adjust()
+              .responsive.recalc();
+          } );
+      </script>
+    </div>
+  </div>
+</div>
+
+{% endblock conteudo %}

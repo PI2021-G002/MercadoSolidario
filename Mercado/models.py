@@ -46,8 +46,8 @@ class FonteDoacao(models.Model):
         ordering = ['nome']
 
 class Estoque(models.Model):
-    id_codigo = models.ForeignKey(
-       CodBarProdSol,
+    id_produto = models.ForeignKey(
+       ProdutoSolidario,
        on_delete = models.PROTECT
     )
     quantidade = models.IntegerField()
@@ -56,11 +56,13 @@ class Estoque(models.Model):
        FonteDoacao,
        on_delete = models.PROTECT
     )
+    data = models.DateField(auto_now=False, auto_now_add=True,null=True)
+    quem_cadastrou = models.CharField(max_length=50)
 
 class AtendimentoRascunho(models.Model):
     tipo = models.CharField(max_length=50)
     atendente = models.CharField(max_length=50)
-    data = models.DateField(auto_now=False, auto_now_add=False)
+    data = models.DateField(auto_now=False, auto_now_add=True)
     finalizado = models.BooleanField(default=False)
     solidarios = models.IntegerField(default=0)
 

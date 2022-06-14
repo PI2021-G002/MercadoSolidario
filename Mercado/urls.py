@@ -18,5 +18,9 @@ urlpatterns = [
     #path('agendamentos/novo/parceiro',NovoAgendamentoParceiro,name = 'NovoAgendamentoVolParc'),
     #path('agendamentos/novo/parceiro/<int:id>/',ReAgendamentoParceiro,name = 'ReAgendamentoVolParc'),
     #path('acompanhamentos',ViewAcompanhamentos,name = 'Acompanhamentos'),
+    path('Estoque/',TemplateView.as_view(template_name='estoque/estoque.html'), name='Estoque MS CS'),
+    path('Estoque/lista',estoque_listagem,name="Lista do Estoque MS CS" ),
+    path('Estoque/listaProdSol',estoque_listagem_prodSol,name="Lista do Estoque por Produto Solidário MS CS" ),
+    path('Estoque/listaValidade',estoque_listagem_validade,name="Lista do Estoque por Validade MS CS" ),
 
 ]
