@@ -1,3 +1,4 @@
+from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
 from pkg_resources import require
@@ -6,7 +7,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponse
-from .forms import FormAtendimento
+from .forms import FormEntradaEstoqueCodBar,FormEntradaEstoqueProduto
 from datetime import date, datetime
 from django.db import connection
 from django.contrib import messages
@@ -57,5 +58,32 @@ def getEstoquePorProduto():
         result = fromCursorToTableData(cursor,row)
     return result
 
+def entradaEstoque(request):
+   # if this is a POST request we need to process the form data
+   if request.method == 'POST':
+      form = FormEntradaEstoqueCodBar(request.POST)
+      # verifica se o código já está associado a um produto solidário    
+      produtoSolidario = CodBarProdSol.objects.filter(codigo_barras=request.POST.__getitem__('codigo'))
+      if produtoSolidario.count() > 0:
+        # Se o código já está associado a um produto solidário mostrar o formulário completo de entrada de estoque
+        form = FormEntradaEstoqueProduto(initial={
+           'id_produto' : produtoSolidario[0].id_produto
+        });
+      else:
+        # se não tiver associado avisa o usuário
+        pass
 
+      # check whether it's valid:
+      if form.is_valid():
+         ### save data
+         hora = request.POST.__getitem__('hora')
+   
+         messages.success(request,"Agendamento Criado com Sucesso")
 
+   # if a GET (or any other method) we'll create a blank form
+   else:
+      form = FormEntradaEstoqueCodBar()
+
+   return render(request, 'estoque/entrada_estoque_codigo.html', {'form': form})
+
+   

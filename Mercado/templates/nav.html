@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-primary">
 
-   <a class="navbar-brand text-light" href="/">
+   <a class="navbar-brand text-light" href="/Mercado">
    
    Mercado Solidário
    
@@ -72,8 +72,20 @@
       {% endif %}
 
       </li>
+
    </ul>
    
+   </div>
+   <div class="collapse navbar-collapse">
+      <ul >
+         <li style="list-style: none;">
+            <!-- Botões de Acessibilidade -->
+				<button type="button" class="btn btn-dark" onClick="fonte('a');">A+</button> <!-- Botão + -->
+				<button type="button" class="btn btn-dark" onClick="fonte('n');" title="Normal">A</button> <!-- Botão - -->
+				<button type="button" class="btn btn-dark" onClick="fonte('d');">A-</button> <!-- Botão - -->
+				<a style="color:black;" href="#altocontraste" id="altocontraste" accesskey="" onmouseup="window.toggleContrast()" >Alto contraste [Alt + 2]</a>
+         </li>
+      </ul>
    </div>
    
    </nav>
