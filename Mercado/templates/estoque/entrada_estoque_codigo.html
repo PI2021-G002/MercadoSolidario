@@ -5,23 +5,41 @@
 
 <div class="container">
   <div class="row">
-    <div class="col">
-    </div>
-    <div class="col">
+
+    <div class="col text-center">
       <h2>Entrada de Estoque - Mercado Solidário CS</h2>
     </div>
-    <div class="col">
+
+  </div>
+  <div class="row">
+    <div class="col-md"></div>
+    <div class="col-md text-center">
+      {% if messages %}
+        {% for message in messages %}
+          {% if 'SEMCADASTRO' in message.extra_tags %}
+            <a class="btn btn-primary" href="/admin/Mercado/codbarprodsol/add/?codigo_barras={{request.POST.codigo}}">Associar o Código {{request.POST.codigo}} a um Produto Solidário</a>
+          {% endif %}       
+        {% endfor %}
+      {% else %}
+        <form id="cadastro" method="POST">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="fieldWrapper form-group">
+              {{ field.errors }}
+              {{ field.label_tag }} {{ field }}
+              {% if field.help_text %}
+              <p class="help">{{ field.help_text|safe }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <p><button type="submit" class="btn btn-primary">Cadastrar</button></p>
+        </form>
+      {% endif %}
     </div>
-	</div>
-	<div class="row">
-    <div class="col">
-    </div>
-    <div class="col">
-    </div>
-    <div class="col" >
-    </div>
+    <div class="col-md"></div>
   </div>
 </div>
+
 
 </script>
 {% endblock conteudo %}

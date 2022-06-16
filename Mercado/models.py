@@ -40,6 +40,8 @@ class CodBarProdSol(models.Model):
 class FonteDoacao(models.Model):
     nome = models.CharField(max_length=50)
     descricao = models.CharField(max_length=255,verbose_name="descrição")
+    def __str__(self):
+        return self.nome 
     class Meta:
         verbose_name = "Fonte de Doação"
         verbose_name_plural = "Fontes de Doações"

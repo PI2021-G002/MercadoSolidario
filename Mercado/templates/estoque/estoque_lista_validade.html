@@ -5,7 +5,7 @@
 <div class="container">
   <div class="row">
     <div class="col text-center">
-      <h2>Listagem de Estoque - Mercado Solidário CS</h2>
+      <h2>Listagem de Estoque por Ordem de Validade - Mercado Solidário CS</h2>
     </div>
 	</div>
 	<div class="row">
@@ -13,15 +13,17 @@
       <table id='tbProdutos' class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
         <thead> 
                 <tr>
-                    <th>Produto</th>
-                    <th scope="col">Data de Validade</th>
+                  <th scope="col">Data de Validade</th>
+                  <th>Produto</th>
+                    <th scope="col">Quantidade</th>
                 </tr>
             </thead>
             <tbody>
                 {% for produto in estoque %}
                 <tr>
-                    <td>{{ produto.id_produto }}</td>
-                    <td>{{ produto.quantidade }}</td>
+                  <td data-sort="{{ test }}">{{ produto.validade}}</td>
+                  <td>{{ produto.id_produto }}</td>
+                  <td>{{ produto.quantidade }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -7,7 +7,7 @@ from django.http import HttpRequest,HttpResponse
 urlpatterns = [
     path('',TemplateView.as_view(template_name='index.html'), name='index'),
     path('accounts/logout',logout_view, name='Logout'),
-    #path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('ajuda/',TemplateView.as_view(template_name='ajuda.html'), name='Ajuda'),
     #path('agendamentos/',ViewAgendamentos, name='agendamento'),  
