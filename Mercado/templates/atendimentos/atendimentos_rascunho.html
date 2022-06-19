@@ -4,13 +4,28 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-sm">
+    <div class="col text-center">
+      <h2>Atendimento - Mercado Solidário CS - Solidários</h2>
     </div>
-    <div class="col-sm">
-      <h2>Entrada de Estoque - Mercado Solidário CS</h2>
+  </div>
+  <div class="row">
+    <div class="col-md center"></div>
+    <div class="col-md center">
+      <table class="table-bordered text-center">
+        <thead>
+          <th scope="col" class="p-3">Atendente</th>
+          <th scope="col" class="p-3">Data</th>
+          <th scope="col" class="p-3">Solidários</th>
+        </thead>
+        <tbody>
+
+          <td class="p-3">{{ context.rascunho.atendente }}</td>
+          <td class="p-3">{{ context.rascunho.data }}</td>
+          <td class="p-3" style="font-size:30px;font-weight:bold;">{{ context.rascunho.solidarios }}</td>
+        </tbody>
+      </table>
     </div>
-    <div class="col-sm">
-    </div>
+    <div class="col-md center"></div>
   </div>
   <div class="row">
     <div class="col-sm">

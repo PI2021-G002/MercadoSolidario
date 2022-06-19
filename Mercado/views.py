@@ -3,12 +3,12 @@ from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
 from pkg_resources import require
-from .models import Estoque, Atendimento, ItensAtendimento, ProdutoSolidario, FonteDoacao, CodBarProdSol
+from .models import AtendimentoRascunho, Estoque, Atendimento, ItensAtendimento, ProdutoSolidario, FonteDoacao, CodBarProdSol
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponse
-from .forms import FormEntradaEstoqueCodBar, FormEntradaEstoqueProduto
+from .forms import FormEntradaEstoqueCodBar, FormEntradaEstoqueProduto,FormAtendimento
 from datetime import date, datetime
 from django.db import connection
 from django.contrib import messages
@@ -110,3 +110,27 @@ def entradaEstoque(request):
         form = FormEntradaEstoqueCodBar()
 
     return render(request, 'estoque/entrada_estoque_codigo.html', {'form': form})
+
+@login_required
+def iniciaRascunho(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+      solidarios = request.POST.__getitem__('solidario')
+      rascunho = AtendimentoRascunho.objects.create(tipo='mercado',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios);
+      if rascunho:
+        response = HttpResponse("Rascunho de Atendimento Criado com sucesso")
+        response.set_cookie('rascunho_id',rascunho.id)
+        context = {
+            'rascunho' : rascunho
+        }
+    else:
+        return render(request, 'atendimentos/atendimentos_solidarios.html')
+    return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context})
+
+def codigoMercado(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+      form=FormAtendimento()
+    else:
+        return render(request, 'atendimentos/atendimentos_solidarios.html')
+    return render(request, 'atendimentos/atendimentos_rascunho.html', {'form': form})

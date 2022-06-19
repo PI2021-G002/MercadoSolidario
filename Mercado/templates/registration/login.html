@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+
+<div class="container">
+	<div class="row">
+		<div class="col text-center">
+			{% if form.errors %}
+			<p>Usuário e/ou senha não reconhecidos. Por favor tente novamente.</p>
+			{% endif %}
+
+			{% if next %}
+				{% if user.is_authenticated %}
+				<p>Seu usuário não tem acesso à esse recurso. Por favor entre em contato com o administrador do site.</p>
+				{% else %}
+				<h2>Digite seu usuário e sua senha para acessar</h2>
+				{% endif %}
+			{% endif %}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm"></div>
+		<div class="col-sm text-center">
+			<form method="post" action="{% url 'login' %}">
+			{% csrf_token %}
+			<table class="table table-sm">
+				<tbody>
+					<tr>
+						<td>{{ form.username.label_tag }}</td>
+						<td>{{ form.username }}</td>
+					</tr>
+					<tr>
+						<td>{{ form.password.label_tag }}</td>
+						<td>{{ form.password }}</td>
+					</tr>
+				</tbody>
+			</table>
+			<input type="submit" class="btn btn-primary" value="login">
+			<input type="hidden" class="btn btn-primary" name="next" value="{{ next }}">
+			</form>
+		</div>
+		<div class="col-sm"></div>
+	</div>
+	<div class="row">
+		<div class="col text-center">
+			{# Assumes you setup the password_reset view in your URLconf #}
+			<p></p><p><a href="{% url 'password_reset' %}">Esqueci minha senha...</a></p>
+		</div>
+	</div>
+</div>
+{% endblock %}

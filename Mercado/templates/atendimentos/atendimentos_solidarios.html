@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+    </div>
+    <div class="col-sm">
+      <h2>Atendimento Mercado  - Mercado Solidário CS</h2>
+    </div>
+    <div class="col-sm">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm">
+    </div>
+    <div class="col">
+      <div class="text-center">Digite a quantidade de solidários e pressione enter para iniciar o atendimento</div>
+      <div id="reader" width="600px"></div>
+      <div class="text-center mt-3">
+        <form name="formSolidarios" id="formSol" method="POST" action="rascunho">
+          <div class="form-group">
+            <label for="solidario">Quantidade de Solidários</label>
+            <input type="number" name="solidario" id="solidario" class="form-control-lg text-center" required ></input>
+            {% csrf_token %}
+          </div>
+          <button type="submit" class="btn btn-primary text-center">Continuar</button>
+
+        </form>
+      </div>
+    </div>
+    <div class="col-sm">
+    </div>
+  </div>
+</div>
+
+{% endblock conteudo %}
