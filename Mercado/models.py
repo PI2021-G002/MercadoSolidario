@@ -77,13 +77,10 @@ class ItensAtendimentoRascunho(models.Model):
        CodBarProdSol,
        on_delete = models.DO_NOTHING
     )
-    id_produto = models.ForeignKey(
-       ProdutoSolidario,
-       on_delete = models.DO_NOTHING,
-       default=0
-    )
+    produto = models.CharField(max_length=50) # gravado para facilitar relatórios
     quantidade = models.IntegerField()
     validade = models.DateField(auto_now=False, auto_now_add=False) 
+    solidarios = models.IntegerField()
  
 class Atendimento(models.Model):
     tipo = models.CharField(max_length=50)

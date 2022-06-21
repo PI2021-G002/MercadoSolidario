@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <h2>Atendimento - Mercado Solidário CS - Solidários</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 offset-md-3 center table-responsive">
+      <table class="table table-bordered text-center">
+        <thead>
+          <th scope="col" class="p-3">Atendente</th>
+          <th scope="col" class="p-3">Data</th>
+          <th scope="col" class="p-3">Solidários</th>
+          <th scope="col" class="p-3">Restantes</th>
+        </thead>
+        <tbody>
+          <td class="p-3 align-middle">{{ context.rascunho.atendente }}</td>
+          <td class="p-3 align-middle">{{ context.rascunho.data }}</td>
+          <td id="solidarios" class="p-3 align-middle" style="font-size:30px;font-weight:bold;">{{ context.rascunho.solidarios }}</td>
+          <td id="restantes" class="p-3 align-middle" style="font-size:30px;font-weight:bold;" >{{ context.rascunho.solidarios }}</td>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md center"></div>
+  </div>
+  <div class="row">
+    <div class="col-sm">
+    </div>
+    <div>
+      <form method="POST">
+        {{ form }}
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary text-center">Continuar</button>
+      </form>
+      <script>
+        $(function(){
+            $('#id_quantidade').keyup(function(){
+               var id_sol = parseFloat($('#id_solidarios').val()) || 0;
+               var quantidade = parseFloat($('#id_quantidade').val()) || 0;
+               var solidarios = parseFloat($('#solidarios').html()) || 0;
+               $('#restantes').html(solidarios - (id_sol*quantidade));
+            });
+         });
+      </script>
+    </div>
+    <div class="col-sm">
+    </div>
+  </div>
+</div>
+
+</script>
+{% endblock conteudo %}
