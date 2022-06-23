@@ -4,7 +4,7 @@ from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
 from pkg_resources import require
-from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol
+from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
@@ -15,6 +15,7 @@ from django.db import connection
 from django.contrib import messages
 from datetime import date, datetime
 from django.db.models.functions import Concat
+from django.forms import model_to_dict
 
 # Create your views here.
 
@@ -112,6 +113,7 @@ def entradaEstoque(request):
 
     return render(request, 'estoque/entrada_estoque_codigo.html', {'form': form})
 
+@login_required
 def informaSolidarios(request):
 #    path('Atendimento/mercado',TemplateView.as_view(template_name='atendimentos/atendimentos_solidarios.html'),name='Atendimentos'),
     context = { }
@@ -153,6 +155,7 @@ def iniciaRascunho(request):
     }
     return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context})
 
+@login_required
 def codigoMercado(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -193,6 +196,11 @@ def codigoMercado(request):
             else:
                 form = FormAtendimento(request.POST)
                 messages.error(request,"Data de validade menor ou igual a hoje. O produto está vencido?")
+                rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+                context = {
+                   'rascunho':rascunho,
+                }
+                return render(request, 'atendimentos/atendimentos_rascunho_produto.html', {'context':context,'form':form})
         else:
             codigo_barras=request.POST.__getitem__('codigo')
             prodsol=CodBarProdSol.objects.filter(codigo_barras=codigo_barras).first()
@@ -213,20 +221,18 @@ def codigoMercado(request):
                 'rascunho':rascunho,
                 'itens':itens,
                 'produto':produto,
-                'codigo':codigo_barras
+                'codigo':codigo_barras,
+                'srestantes':request.POST.__getitem__('srestantes')
             }
             return render(request, 'atendimentos/atendimentos_rascunho_produto.html', {'context':context,'form':form})
-
     else:
-
         rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
         itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
         context = {
         'rascunho':rascunho,
         'itens':itens
         }
-
-    return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
+        return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
 
 def cancelarRascunho(request):
     # if this is a POST request we need to process the form data
@@ -246,3 +252,40 @@ def removerItem(request,id=0):
         ItensAtendimentoRascunho.objects.filter(id=id).delete()
         messages.success(request, "Item removido com sucesso")
     return response
+
+@login_required
+def concluirAtendimento(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        value = request.COOKIES.get('rascunho_id')
+        # copia a tabela para a tabela atendimento
+        rascunho = AtendimentoRascunho.objects.get(id__exact=value)
+        kwargs = model_to_dict(rascunho,exclude=['id'])
+        kwargs['data'] = datetime.now()
+        atendimento = Atendimento.objects.create(**kwargs)
+        # copia os itens da tabela itensRascunho para a tabela itens
+        itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+        for item in itens:
+            kwargs = model_to_dict(item,exclude=['id'])
+            kwargs['id_atendimento']=atendimento
+            tmp = CodBarProdSol.objects.get(id__exact=kwargs['id_codigo'])
+            kwargs['id_codigo']=tmp
+            tmp = ItensAtendimento.objects.create(**kwargs)
+            
+        #Seta atendimento como concluido
+        atendimento.finalizado = True
+        
+        #apaga rascunhos
+        itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id).delete()
+        rascunho = AtendimentoRascunho.objects.filter(id__exact=value).delete()
+        #remove cookies
+        #retorna na tela de atendimentos
+        response = HttpResponseRedirect('/Mercado/Atendimento')
+        messages.success(request, "Atendimento Encerrado com sucesso")
+        response.delete_cookie('rascunho_id')
+        response.delete_cookie('solidarios')
+
+        return response
+
+def emDesenvolvimento(request):
+    return render(request,'em_desenvolvimento.html')

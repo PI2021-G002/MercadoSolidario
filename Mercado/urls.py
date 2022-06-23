@@ -23,5 +23,7 @@ urlpatterns = [
     path('Atendimento/codigo',codigoMercado,name='Rascunho Mercado'),
     path('Atendimento/cancelar',cancelarRascunho,name='Rascunho Mercado'),    
     path('Atendimento/removeritem/<int:id>',removerItem,name='remover Item rascunho'),
-
+    path('Atendimento/concluir',concluirAtendimento,name='remover Item rascunho'),
+    path('Atendimento/cestabasica',emDesenvolvimento,name='cesta básica'),
+    path('Atendimento/cestaemergencial',emDesenvolvimento,name='cesta básica'),
 ]

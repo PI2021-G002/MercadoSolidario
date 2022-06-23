@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-6 offset-md-3 center table-responsive">
+    <div class="col-md-8 offset-md-2 center table-responsive">
       <table class="table table-bordered text-center">
         <thead>
           <th scope="col" class="p-3">Atendente</th>
@@ -55,17 +55,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        <script>
-          var soma = 0;
-          $('#tbProduto tbody tr').each(function(){
-            var qtd = $(this).find('td').eq(2).html();
-            var sol = $(this).find('td').eq(3).html();
-            soma  += (qtd*sol);
-            $(this).find('td').eq(4).html(qtd*sol);
-            var solidarios = parseFloat($('#solidarios').html()) || 0;
-            $('#restantes').html(solidarios - soma);
-          });
-        </script>
         <script lang="javascript">
           $(document).ready( function () {
               var table = $('#tbProdutos').DataTable( {
@@ -78,7 +67,6 @@
               .responsive.recalc();
           } );
       </script>
-
     </div>
   </div>
   <div class="row">
@@ -92,12 +80,34 @@
           <div class="form-group">
             <label for="codigo">Código de barras</label>
             <input type="text" name="codigo" id="codigo" class="form-control-lg text-center" required ></input>
+            <input type="hidden" name="srestantes" id="srestantes" value="{{ context.rascunho.solidarios }}" required ></input>
             {% csrf_token %}
           </div>
           <button type="submit" class="btn btn-primary text-center">Continuar</button>
 
         </form>
       </div>
+      <div class="text-center mt-5">
+        <form name="formConcluir" id="formConcluir" method="POST" action="concluir">
+          <div class="form-group">
+            {% csrf_token %}
+          </div>
+          <button type="submit" class="btn btn-success text-center">Concluir e encerrar Atendimento</button>
+
+        </form>
+      </div>
+      <script>
+        var soma = 0;
+        $('#tbProduto tbody tr').each(function(){
+          var qtd = $(this).find('td').eq(2).html();
+          var sol = $(this).find('td').eq(3).html();
+          soma  += (qtd*sol);
+          $(this).find('td').eq(4).html(qtd*sol);
+          var solidarios = parseFloat($('#solidarios').html()) || 0;
+          $('#restantes').html(solidarios - soma);
+          $('input#srestantes').val(solidarios - soma);
+        });
+      </script>
     </div>
     <div class="col-sm">
     </div>
