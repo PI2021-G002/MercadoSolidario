@@ -4,33 +4,33 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-sm">
-    </div>
-    <div class="col-sm">
-      <h2>Atendimento Mercado  - Mercado Solidário CS</h2>
-    </div>
-    <div class="col-sm">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="text-center">Atendimento Mercado  - Mercado Solidário CS</h2>
     </div>
   </div>
   <div class="row">
-    <div class="col-sm">
-    </div>
     <div class="col">
-      <div class="text-center">Digite a quantidade de solidários e pressione enter para iniciar o atendimento</div>
-      <div id="reader" width="600px"></div>
       <div class="text-center mt-3">
-        <form name="formSolidarios" id="formSol" method="POST" action="rascunho">
-          <div class="form-group">
-            <label for="solidario">Quantidade de Solidários</label>
-            <input type="number" name="solidario" id="solidario" class="form-control-lg text-center" required ></input>
-            {% csrf_token %}
+        {% if context.rascunho_id %}
+           <div>
+             <p>ATENÇÃO: Você tem um atendimento de {{ context.solidarios }} solidários em andamento. Continua ou encerra sem salvar?</p>
+             <a class="btn btn-primary mb-5" href="rascunho">Continuar</a>
+             <a class="btn btn-danger mt-5" href="cancelar">Cancelar atendimento (todos os dados do atendimento serão apagados)</a>
+            </div>
+        {% else %}
+          <div class="text-center">Digite a quantidade de solidários e pressione "Continuar" para iniciar o atendimento</div>
+          <div>
+            <form name="formSolidarios" id="formSol" method="POST" action="rascunho">
+              <div class="form-group">
+                <label for="solidario">Quantidade de Solidários</label>
+                <input type="number" name="solidario" id="solidario" class="form-control-lg text-center" required ></input>
+                {% csrf_token %}
+              </div>
+              <button type="submit" class="btn btn-primary text-center">Continuar</button>
+            </form>
           </div>
-          <button type="submit" class="btn btn-primary text-center">Continuar</button>
-
-        </form>
+        {% endif %}
       </div>
-    </div>
-    <div class="col-sm">
     </div>
   </div>
 </div>

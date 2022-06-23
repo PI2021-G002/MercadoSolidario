@@ -9,23 +9,65 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md center"></div>
-    <div class="col-md center">
-      <table class="table-bordered text-center">
+    <div class="col-md-8 offset-md-2 center table-responsive">
+      <table class="table table-bordered text-center">
         <thead>
           <th scope="col" class="p-3">Atendente</th>
           <th scope="col" class="p-3">Data</th>
           <th scope="col" class="p-3">Solidários</th>
+          <th scope="col" class="p-3">Restantes</th>
         </thead>
         <tbody>
-
-          <td class="p-3">{{ context.rascunho.atendente }}</td>
-          <td class="p-3">{{ context.rascunho.data }}</td>
-          <td class="p-3" style="font-size:30px;font-weight:bold;">{{ context.rascunho.solidarios }}</td>
+          <td class="p-3 align-middle">{{ context.rascunho.atendente }}</td>
+          <td class="p-3 align-middle">{{ context.rascunho.data }}</td>
+          <td class="p-3 align-middle" style="font-size:30px;font-weight:bold;" id="solidarios">{{ context.rascunho.solidarios }}</td>
+          <td class="p-3 align-middle" style="font-size:30px;font-weight:bold;" id="restantes">{{ context.rascunho.solidarios }}</td>
         </tbody>
       </table>
     </div>
     <div class="col-md center"></div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <table id='tbProduto' class="stripe hover table table-bordered" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+        <thead class="text-center"> 
+                <tr>
+                  <th>Produto</th>
+                  <th scope="col">Data de Validade</th>
+                  <th scope="col">Quantidade</th>
+                  <th scope="col">Solidários</th>
+                  <th scope="col">Subtotal</th>
+                  <th scope="col">Ação</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for produto in context.itens %}
+                <tr>
+                  <td>{{ produto.produto }}</td>
+                  <td>{{ produto.validade}}</td>
+                  <td class="qtd">{{ produto.quantidade }}</td>
+                  <td class="sol">{{ produto.solidarios }}</td>
+                  <td class="subtotal"><script>$()</script></td>
+                  <td><a href="removeritem/{{ produto.id }}">
+                    <div class="material-icons" >delete</div></a>
+                  </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script lang="javascript">
+          $(document).ready( function () {
+              var table = $('#tbProdutos').DataTable( {
+                  language: {
+                  url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                  },
+                  responsive : true
+              } )
+              .columns.adjust()
+              .responsive.recalc();
+          } );
+      </script>
+    </div>
   </div>
   <div class="row">
     <div class="col-sm">
@@ -38,12 +80,34 @@
           <div class="form-group">
             <label for="codigo">Código de barras</label>
             <input type="text" name="codigo" id="codigo" class="form-control-lg text-center" required ></input>
+            <input type="hidden" name="srestantes" id="srestantes" value="{{ context.rascunho.solidarios }}" required ></input>
             {% csrf_token %}
           </div>
           <button type="submit" class="btn btn-primary text-center">Continuar</button>
 
         </form>
       </div>
+      <div class="text-center mt-5">
+        <form name="formConcluir" id="formConcluir" method="POST" action="concluir">
+          <div class="form-group">
+            {% csrf_token %}
+          </div>
+          <button type="submit" class="btn btn-success text-center">Concluir e encerrar Atendimento</button>
+
+        </form>
+      </div>
+      <script>
+        var soma = 0;
+        $('#tbProduto tbody tr').each(function(){
+          var qtd = $(this).find('td').eq(2).html();
+          var sol = $(this).find('td').eq(3).html();
+          soma  += (qtd*sol);
+          $(this).find('td').eq(4).html(qtd*sol);
+          var solidarios = parseFloat($('#solidarios').html()) || 0;
+          $('#restantes').html(solidarios - soma);
+          $('input#srestantes').val(solidarios - soma);
+        });
+      </script>
     </div>
     <div class="col-sm">
     </div>

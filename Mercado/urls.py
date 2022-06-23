@@ -17,8 +17,13 @@ urlpatterns = [
     path('Estoque/entrada/',TemplateView.as_view(template_name='estoque/entrada_estoque.html'),name="Cadastra Estoque MS CS" ),
     path('Estoque/entrada/codigo',entradaEstoque,name="Cadastra Estoque MS CS" ),
     path('Atendimento/',TemplateView.as_view(template_name='atendimentos/atendimentos.html'),name='Atendimentos'),
-    path('Atendimento/mercado',TemplateView.as_view(template_name='atendimentos/atendimentos_solidarios.html'),name='Atendimentos'),
+    #path('Atendimento/mercado',TemplateView.as_view(template_name='atendimentos/atendimentos_solidarios.html'),name='Atendimentos'),
+    path('Atendimento/mercado',informaSolidarios,name='Atendimentos'),
     path('Atendimento/rascunho',iniciaRascunho,name='Inicia Rascunho'),
     path('Atendimento/codigo',codigoMercado,name='Rascunho Mercado'),
-
+    path('Atendimento/cancelar',cancelarRascunho,name='Rascunho Mercado'),    
+    path('Atendimento/removeritem/<int:id>',removerItem,name='remover Item rascunho'),
+    path('Atendimento/concluir',concluirAtendimento,name='remover Item rascunho'),
+    path('Atendimento/cestabasica',emDesenvolvimento,name='cesta básica'),
+    path('Atendimento/cestaemergencial',emDesenvolvimento,name='cesta básica'),
 ]

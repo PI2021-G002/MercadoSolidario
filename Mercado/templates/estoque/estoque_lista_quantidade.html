@@ -12,35 +12,40 @@
 	</div>
 	<div class="row">
     <div class="col">
-      <table id='tbProdutos' class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
-        <thead> 
+      <div class="container">
+        <table id='tbProdutos' class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+          <thead> 
+            <tr>
+                <th>Produto</th>
+                <th scope="col">Quantidade em Estoque</th>
+                <th scope="col">Estoque Mínimo</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for produto in estoque %}
+              <div class="row">
                 <tr>
-                    <th>Produto</th>
-                    <th scope="col">Quantidade em Estoque</th>
+                    <div class="col"><td>{{ produto.produto}}</td></div>
+                    <div class="col"></div><td>{{ produto.quantidade }}</td></div>
+                    <div class="col"></div><td>{{ produto.estoque_minimo }}</td></div>
                 </tr>
-            </thead>
-            <tbody>
-                {% for produto in estoque %}
-                <tr>
-                    <td>{{ produto.produto}}</td>
-                    <td>{{ produto.quantidade }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
+              </div>
+              {% endfor %}
+          </tbody>
         </table>
-        <script lang="javascript">
-          $(document).ready( function () {
-              var table = $('#tbProdutos').DataTable( {
-                  language: {
-                  url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
-                  },
-                  responsive : true
-              } )
-              .columns.adjust()
-              .responsive.recalc();
-          } );
+      </div>
+      <script lang="javascript">
+        $(document).ready( function () {
+            var table = $('#tbProdutos').DataTable( {
+                language: {
+                url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                },
+                responsive : true
+            } )
+            .columns.adjust()
+            .responsive.recalc();
+        } );
       </script>
-
     </div>
   </div>
 </div>
