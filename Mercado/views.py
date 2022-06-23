@@ -1,5 +1,6 @@
 from asyncio.proactor_events import _ProactorBasePipeTransport
 from copy import copy
+from email import message
 from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
@@ -64,6 +65,23 @@ def getEstoquePorProduto():
     with connection.cursor() as cursor:
         cursor.execute(
             'select concat(cat.Categoria," ",pro.quantidade,pro.unidade) as produto ,sum(est.quantidade) as quantidade, pro.estoque_minimo from Mercado_estoque est, Mercado_categoria cat, Mercado_produtosolidario pro where cat.id = pro.id_categoria_id and est.id_produto_id = pro.id group by est.id_produto_id ORDER BY produto;')
+        row = cursor.fetchall()
+        result = fromCursorToTableData(cursor, row)
+    return result
+
+@login_required
+def estoque_listagem_categoria(request):
+    #avaliar a necessidade dessa função
+    return render(request, 'estoque/estoque_lista_categoria.html',
+                  {
+#                      'estoque': Estoque.objects.annotate(Total=Sum('id_produto__quantidade'))
+                      'estoque': getEstoquePorCategoria()
+                  })
+
+def getEstoquePorCategoria():
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'select concat(cat.Categoria," ",pro.quantidade,pro.unidade) as produto ,sum(est.quantidade) as quantidade, pro.estoque_minimo from Mercado_estoque est, Mercado_categoria cat, Mercado_produtosolidario pro where cat.id = pro.id_categoria_id and est.id_id = pro.id group by est.id_produto_id ORDER BY produto;')
         row = cursor.fetchall()
         result = fromCursorToTableData(cursor, row)
     return result
@@ -160,9 +178,9 @@ def codigoMercado(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # É o post com os dados para cadastrar
+        form = FormAtendimento(request.POST)
         if request.POST.__contains__('quantidade'):
-            form = FormAtendimento(request.POST)
-             # check whether it's valid: e data de validade maior que hoje.
+            # check whether it's valid: e data de validade maior que hoje.
             if form.is_valid() and (form.cleaned_data['dataValidade'].isoformat() >= datetime.now().isoformat()):
                 # save data
                 #id_produto = ProdutoSolidario(request.POST.__getitem__('idp'))
@@ -202,29 +220,41 @@ def codigoMercado(request):
                 }
                 return render(request, 'atendimentos/atendimentos_rascunho_produto.html', {'context':context,'form':form})
         else:
+            #É o post para procurar o produto
             codigo_barras=request.POST.__getitem__('codigo')
             prodsol=CodBarProdSol.objects.filter(codigo_barras=codigo_barras).first()
-            
-            produto=ProdutoSolidario.objects.get(id__exact=prodsol.id_produto_id)
-            categoria=Categoria.objects.get(id__exact=produto.id_categoria_id)
-            form=FormAtendimento(initial={
-                'idp':produto.id,
-                'produto':categoria.categoria + ' ' + str(produto.quantidade) + produto.unidade,
-                'max_fam':produto.max_familia,
-                'solidarios':produto.preco_solidario,
-                'codigo_barras':codigo_barras,
-                'id_prodsol':prodsol.id
-                })
-            rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
-            itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-            context = {
+            # se o código já está cadastrado
+            if prodsol :
+                produto=ProdutoSolidario.objects.get(id__exact=prodsol.id_produto_id)
+                categoria=Categoria.objects.get(id__exact=produto.id_categoria_id)
+                form=FormAtendimento(initial={
+                    'idp':produto.id,
+                    'produto':categoria.categoria + ' ' + str(produto.quantidade) + produto.unidade,
+                    'max_fam':produto.max_familia,
+                    'solidarios':produto.preco_solidario,
+                    'codigo_barras':codigo_barras,
+                    'id_prodsol':prodsol.id
+                    })
+                rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+                itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                context = {
+                    'rascunho':rascunho,
+                    'itens':itens,
+                    'produto':produto,
+                    'codigo':codigo_barras,
+                    'srestantes':request.POST.__getitem__('srestantes')
+                }
+                return render(request, 'atendimentos/atendimentos_rascunho_produto.html', {'context':context,'form':form})
+            else:
+                #não encontrou o produto
+                messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado.")
+                rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+                itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                context = {
                 'rascunho':rascunho,
-                'itens':itens,
-                'produto':produto,
-                'codigo':codigo_barras,
-                'srestantes':request.POST.__getitem__('srestantes')
-            }
-            return render(request, 'atendimentos/atendimentos_rascunho_produto.html', {'context':context,'form':form})
+                'itens':itens
+                }
+                return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
     else:
         rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
         itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)

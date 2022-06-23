@@ -30,7 +30,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ['192.168.15.5','vitor-Inspiron-3442','localhost']
+ALLOWED_HOSTS = ['192.168.15.5','vitor-Inspiron-3442','localhost','mercadosolidario.sytes.net']
 
 # Application definition
 
@@ -81,6 +81,7 @@ WSGI_APPLICATION = 'MercadoSolidario.wsgi.application'
 
 DATABASES = {
     'default': {
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         'ENGINE': 'django.db.backends.mysql',
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
