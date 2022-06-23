@@ -3,6 +3,7 @@ from Mercado.models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoac
 
 import datetime
 from django.utils import timezone
+import unittest
 
 class BaseModelTestCase(TestCase):
 	@classmethod
@@ -12,27 +13,35 @@ class BaseModelTestCase(TestCase):
 		cls.categoria.save()
 		cls.produto_solidario = ProdutoSolidario(preco_solidario=70, quantidade=15, id_categoria=cls.categoria, unidade='kg', estoque_minimo=2, max_familia=2)
 		cls.produto_solidario.save()
+		
 		cls.produto_barras = CodBarProdSol(id_produto=cls.produto_solidario, codigo_barras=123123123)
 		cls.produto_barras.save()
-
+		
 #		cls.fonte_doacao = FonteDoacao(nome='Loja Atacado', descricao='Mercado de alimentos')
 
-		cls.fonte_doacao = FonteDoacao(nome='Loja Atacado')
+		cls.fonte_doacao = FonteDoacao(nome='Loja Atacado', descricao='Loja Atacado Integrada')
 
 		cls.fonte_doacao.save()
-		cls.estoque = Estoque(id_codigo=cls.produto_barras, quantidade=10, validade=datetime.datetime.now(tz=timezone.utc), id_fonte=cls.fonte_doacao)
+		
+		cls.estoque = Estoque(id_produto=cls.produto_solidario, quantidade=10, validade=datetime.datetime.now(tz=timezone.utc), id_fonte=cls.fonte_doacao, data=datetime.datetime.now(tz=timezone.utc), quem_cadastrou='Funcionario 1')
 		cls.estoque.save()
-		cls.atendimento = Atendimento(tipo='Mercado Social', atendente='Nome da pessoa', data=datetime.datetime.now(tz=timezone.utc), finalizado=True)
+		
+		cls.atendimento = Atendimento(tipo='Mercado Social', atendente='Nome da pessoa', data=datetime.datetime.now(tz=timezone.utc), finalizado=True, solidarios=100)
 		cls.atendimento.save()
+		
 		cls.items_atendimento = ItensAtendimento(id_atendimento=cls.atendimento, id_codigo=cls.produto_barras, quantidade=10, validade=datetime.datetime.now(tz=timezone.utc))
 		cls.items_atendimento.save()
+		
 		cls.atendimento_rascunho = AtendimentoRascunho(tipo='Mercado', atendente='Priscila', data=datetime.datetime.now(tz=timezone.utc), finalizado='True')
 		cls.atendimento_rascunho.save()
-		cls.itens_rascunho = ItensAtendimentoRascunho(id_codigo=cls.produto_barras, quantidade=4, validade=datetime.datetime.now(tz=timezone.utc), fonte=cls.fonte_doacao)
+		
+		cls.itens_rascunho = ItensAtendimentoRascunho(id_atendimento=cls.atendimento_rascunho, id_codigo=cls.produto_barras, id_produto=cls.produto_solidario, quantidade=4, validade=datetime.datetime.now(tz=timezone.utc))
 		cls.itens_rascunho.save()
-		cls.atendimento_template = AtendimentoTemplate(tipo='Cesta Básica')
+		
+		cls.atendimento_template = AtendimentoTemplate(tipo='Cesta Básica', descricao='Contem produtos de cesta básica')
 		cls.atendimento_template.save()
-		cls.itens_atend_template = ItensAtendimentoTemplate(id_atendimento=cls.atendimento_template, id_codigo=cls.produto_barras, quantidade=2)
+		
+		cls.itens_atend_template = ItensAtendimentoTemplate(id_atendimento=cls.atendimento_template, id_produto=cls.produto_solidario, quantidade=2)
 		cls.itens_atend_template.save()
 		
 class CategoriaModelTestCase(BaseModelTestCase):
@@ -71,7 +80,7 @@ class FonteDoacaoModelTestCase(BaseModelTestCase):
 	def test_fonte_doacao_retorna_valores(self):
 		self.assertEqual(1, len(FonteDoacao.objects.filter()))
 		self.assertEqual('Loja Atacado', FonteDoacao.objects.filter(nome__contains='Loja Atacado').values_list().get()[1])
-		
+	
 class EstoqueModelTestCase(BaseModelTestCase):
 	def test_estoque_model(self):
 		self.assertEqual(10, self.estoque.quantidade)
@@ -80,7 +89,7 @@ class EstoqueModelTestCase(BaseModelTestCase):
 		#Testa o relacionamento TODO Refatorar
 		#TODO implementar algum teste com a data
 		id_estoque_produto_codigo_barras = Estoque.objects.filter().values_list().get()[0]
-		self.assertEqual(6, id_estoque_produto_codigo_barras)
+		self.assertEqual(5, id_estoque_produto_codigo_barras)
 
 class AtendimentoModelTestCase(BaseModelTestCase):
 	def test_atendimento_model(self):
@@ -97,7 +106,7 @@ class ItensAtendimentoModelTestCase(BaseModelTestCase):
 	def test_items_atendimento_retorna_valores(self):
 		id_estoque_produto_codigo_barras = CodBarProdSol.objects.filter().values_list().get()[0]
 
-		self.assertEqual(8, id_estoque_produto_codigo_barras)
+		self.assertEqual(7, id_estoque_produto_codigo_barras)
 		
 class AtendimentoRascunhoModelTestCase(BaseModelTestCase):
 	def test_atendimento_rascunho_model(self):
@@ -111,7 +120,7 @@ class ItensAtendimentoRascunhoModelTestCase(BaseModelTestCase):
 		self.assertEqual(4, self.itens_rascunho.quantidade)
 	
 	def test_itens_rascunho_retorna_valores(self):
-		self.assertEqual(4, ItensAtendimentoRascunho.objects.filter(quantidade__contains='4').values_list().get()[2])
+		self.assertEqual(9, ItensAtendimentoRascunho.objects.filter(quantidade__contains='4').values_list().get()[2])
 		
 class AtendimentoTemplateModelTestCase(BaseModelTestCase):
 	def test_atendimento_template_model(self):
@@ -120,13 +129,10 @@ class AtendimentoTemplateModelTestCase(BaseModelTestCase):
 	def test_atendimento_template_retorna_valores(self):
 		self.assertEqual('Cesta Básica', AtendimentoTemplate.objects.filter(tipo__contains='Cesta Básica').values_list().get()[1])
 		
-	
 class ItensAtendimentoTemplateModelTestCase(BaseModelTestCase):
 	def test_itens_atend_template(self):
 		self.assertEqual(2, self.itens_atend_template.quantidade)
 		
 	def test_itens_atend_template_retorna_valores(self):
 		self.assertEqual(2, ItensAtendimentoTemplate.objects.filter(quantidade__contains='2').values_list().get()[3])
-
-		self.assertEqual(5, id_estoque_produto_codigo_barras)
 

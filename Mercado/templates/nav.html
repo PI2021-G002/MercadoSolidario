@@ -83,7 +83,8 @@
 				<button type="button" class="btn btn-dark" onClick="fonte('a');">A+</button> <!-- Botão + -->
 				<button type="button" class="btn btn-dark" onClick="fonte('n');" title="Normal">A</button> <!-- Botão - -->
 				<button type="button" class="btn btn-dark" onClick="fonte('d');">A-</button> <!-- Botão - -->
-				<a style="color:black;" href="#altocontraste" id="altocontraste" accesskey="" onmouseup="window.toggleContrast()" >Alto contraste [Alt + 2]</a>
+				<!--a style="color:black;" href="#altocontraste" id="altocontraste" accesskey="1" onclick="window.toggleContrast()" onkeydown="window.toggleContrast()" >Alto contraste [Alt + 1]</a-->
+				<a style="color:black;" href="#altocontraste" id="altocontraste" accesskey="1" onclick="contraste()" onkeydown="contraste()" onload="contraste()">Alto contraste [Alt + 1]</a>
          </li>
       </ul>
    </div>

@@ -13,33 +13,33 @@ class Test_pagina_produto_solidarios(unittest.TestCase):
 
 	def setUp(self):
 		PATH = config('PATH_WEBDRIVER')
-		self.driver = webdriver.Firefox(executable_path=PATH)
+		#self.driver = webdriver.Firefox(executable_path=PATH)
+		self.driver = webdriver.Firefox()
 		
 		#Realiza o login e permanece logado até que todos os testes sejam executados.
-		driver = self.driver
-		driver.get("http://localhost:8000/admin/login/?next=/admin/")
+		self.driver.get("http://localhost:8000/admin/login/?next=/admin/")
         
-		self.assertIn("Acessar | Site de administração do Django", driver.title)
-		self.assertEqual("Acessar | Site de administração do Django", driver.title)
-		elem = driver.find_element(by=By.NAME, value="username")
+		self.assertIn("Acessar | Administração do Mercado", self.driver.title)
+		self.assertEqual("Acessar | Administração do Mercado", self.driver.title)
+		elem = self.driver.find_element(by=By.NAME, value="username")
 		elem.send_keys("root")
 		elem.send_keys(Keys.ENTER)
-		elem = driver.find_element(by=By.NAME, value="password")
+		elem = self.driver.find_element(by=By.NAME, value="password")
 		elem.send_keys("root")
 		elem.send_keys(Keys.ENTER)
 
         #Tempo de espera para carregar a mensagem na tela
 		sleep(2)
-		self.assertIn("Administração do Site | Site de administração do Django", driver.title)
+		self.assertIn("Mercado Solidário | Administração do Mercado", self.driver.title)
 		
 	def test_adicionar_produto_solidario(self):
 		driver = self.driver
 		
 		#Acessa o menu Produto solidarios na lateral esquerda
-		elem = driver.find_element(by=By.LINK_TEXT, value="Produto solidarios").click()
+		elem = driver.find_element(by=By.LINK_TEXT, value="Produtos Solidários").click()
 		sleep(1)
 		
-		elem = driver.find_element(by=By.LINK_TEXT, value="ADICIONAR PRODUTO SOLIDARIO").click()
+		elem = driver.find_element(by=By.LINK_TEXT, value="ADICIONAR PRODUTO SOLIDÁRIO").click()
 		sleep(2)
 		
 		elem = driver.find_element(by=By.NAME, value="id_categoria")
@@ -58,7 +58,7 @@ class Test_pagina_produto_solidarios(unittest.TestCase):
 		sleep(2)
 		
 		#É possivel concatenar o teste com o resultado, verificar a necessidade para validar
-		success_message = "O fonte doacao foi adicionado com sucesso."
+		success_message = "O produto foi adicionado com sucesso."
 		success = driver.find_elements(By.CLASS_NAME, "success")[0]
 		self.assertIn("adicionado com sucesso", success.text)
 	
