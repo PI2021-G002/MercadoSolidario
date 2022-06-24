@@ -29,11 +29,42 @@
 <!-- google fonts -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+<!-- Alto Contraste e fonte-->
+<link href="{% static 'css/contrast.css' %}" rel="stylesheet">
+<script type="text/javascript" charset="utf8" src="{% static 'js/high-contrast.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/fonte.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/contraste.js' %}"></script>
+
+<!-- Carrega o tamanho da fonte salva -->
+<script type="text/javascript" charset="utf8"> 
+$(document).ready(function(){
+	
+	if(localStorage.getItem('font-size')) {
+		var elemento = $(".acessibilidade");
+		var fonte = localStorage.getItem('font-size');
+		fonte = parseInt(fonte);
+		elemento.css("fontSize", fonte);
+
+	}
+});
+</script>
+
+<!-- Carrega o status do contraste salvo -->
+<script type="text/javascript" charset="utf8">
+$(document).ready(function(){
+	var body = document.body;
+
+	if(localStorage.getItem('contrast-color')) {
+		body.classList.add('contrast');
+	}
+});
+</script>
+
 <title>Mercado Solidário</title>
 
 </head>
 
-<body>
+<body class="acessibilidade" id="contrast-id">
    {% for msg in messages %}
    <div class="alert alert-warning alert-dismissible fade show" role="alert">
        <strong>Hey !</strong> {{msg}}

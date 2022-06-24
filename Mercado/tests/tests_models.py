@@ -29,13 +29,13 @@ class BaseModelTestCase(TestCase):
 		cls.atendimento = Atendimento(tipo='Mercado Social', atendente='Nome da pessoa', data=datetime.datetime.now(tz=timezone.utc), finalizado=True, solidarios=100)
 		cls.atendimento.save()
 		
-		cls.items_atendimento = ItensAtendimento(id_atendimento=cls.atendimento, id_codigo=cls.produto_barras, quantidade=10, validade=datetime.datetime.now(tz=timezone.utc))
+		cls.items_atendimento = ItensAtendimento(id_atendimento=cls.atendimento, id_codigo=cls.produto_barras, produto='Este é um produto', quantidade=10, validade=datetime.datetime.now(tz=timezone.utc), solidarios=200)
 		cls.items_atendimento.save()
 		
 		cls.atendimento_rascunho = AtendimentoRascunho(tipo='Mercado', atendente='Priscila', data=datetime.datetime.now(tz=timezone.utc), finalizado='True')
 		cls.atendimento_rascunho.save()
 		
-		cls.itens_rascunho = ItensAtendimentoRascunho(id_atendimento=cls.atendimento_rascunho, id_codigo=cls.produto_barras, id_produto=cls.produto_solidario, quantidade=4, validade=datetime.datetime.now(tz=timezone.utc))
+		cls.itens_rascunho = ItensAtendimentoRascunho(id_atendimento=cls.atendimento_rascunho, id_codigo=cls.produto_barras, produto='Informações sobre o produto', quantidade=4, validade=datetime.datetime.now(tz=timezone.utc), solidarios=100)
 		cls.itens_rascunho.save()
 		
 		cls.atendimento_template = AtendimentoTemplate(tipo='Cesta Básica', descricao='Contem produtos de cesta básica')
@@ -107,7 +107,7 @@ class ItensAtendimentoModelTestCase(BaseModelTestCase):
 		id_estoque_produto_codigo_barras = CodBarProdSol.objects.filter().values_list().get()[0]
 
 		self.assertEqual(7, id_estoque_produto_codigo_barras)
-		
+
 class AtendimentoRascunhoModelTestCase(BaseModelTestCase):
 	def test_atendimento_rascunho_model(self):
 		self.assertEqual('Priscila', self.atendimento_rascunho.atendente)
