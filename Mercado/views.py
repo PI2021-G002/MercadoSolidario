@@ -108,6 +108,7 @@ def entradaEstoque(request):
                 estoque = Estoque.objects.create(id_produto=id_produto,quantidade=quantidade,validade=validade,id_fonte=id_fonte,quem_cadastrou=quem_cadastrou,data=data);
                 messages.success(request, "Item de Estoque Criado com Sucesso")
                 # sai da classe e volta na tela de scan com a mensagem
+                return HttpResponseRedirect('../entrada/')
             else:
                 form = FormEntradaEstoqueProduto(request.POST)
                 messages.error(request,"Data de validade menor ou igual a hoje. O produto está vencido?")

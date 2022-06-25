@@ -10,6 +10,10 @@
 .contrast section,
 .contrast main,
 .contrast aside,
+.contrast div,
+.contrast tr,
+.constrast select,
+.constrast option,
 .contrast article {
     background: black !important;
     color: white !important;

@@ -18,8 +18,8 @@ class FormEntradaEstoqueProduto(forms.Form):
     id_fonte.widget.attrs['class'] = 'form-control'
     quem_cadastrou = forms.CharField(required=True)
     quem_cadastrou.widget.attrs['class'] = 'form-control'
+    idp = forms.IntegerField(required=True,widget=forms.HiddenInput(),label="")
     
-
 class FormAtendimento(forms.Form):
     idp = forms.IntegerField(required=True,widget=forms.HiddenInput(),label="")
     codigo_barras = forms.IntegerField(required=True,widget=forms.HiddenInput(),label="")

@@ -58,6 +58,14 @@ $(document).ready(function(){
 		body.classList.add('contrast');
 	}
 });
+$(document).ready(function(){
+	if(localStorage.getItem('contrast-color')) {
+		$('.navbar-toggler').addClass("navbar-dark");
+        	}
+    else{
+        $('.navbar-toggler').removeClass("navbar-dark");
+    }
+});
 </script>
 
 <title>Mercado Solidário</title>
@@ -98,5 +106,9 @@ $(document).ready(function(){
 {% include 'rodape.html' %}
 
 </body>
-
+<script>
+   $(document).ready(function(){
+    $('.navbar-toggler-icon').css('display','flex');
+   });
+ </script>
 </html>
