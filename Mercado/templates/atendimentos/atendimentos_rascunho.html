@@ -10,7 +10,7 @@
   </div>
   <div class="row">
     <div class="col-md-8 offset-md-2 center table-responsive">
-      <table class="table table-bordered text-center">
+      <table id="tbTop" class="table table-bordered text-center">
         <thead>
           <th scope="col" class="p-3">Atendente</th>
           <th scope="col" class="p-3">Data</th>
@@ -29,7 +29,7 @@
   </div>
   <div class="row">
     <div class="col">
-      <table id='tbProduto' class="stripe hover table table-bordered" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+      <table id='tbProdutos' class="stripe hover table table-bordered" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
         <thead class="text-center"> 
                 <tr>
                   <th>Produto</th>
@@ -65,6 +65,18 @@
               } )
               .columns.adjust()
               .responsive.recalc();
+          } );
+      </script>
+      <script lang="javascript">
+      $(document).ready( function () {
+          var tableto = $('#tbTop').DataTable( {
+              language: {
+              url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+              },
+              responsive : true
+          } )
+          .columns.adjust()
+          .responsive.recalc();
           } );
       </script>
     </div>
