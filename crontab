@@ -1,0 +1,4 @@
+0 * * * * /home/ubuntu/bin/keep-alive.bash
+1 0 * * 0 /usr/bin/rm /home/ubuntu/bin/index* > /dev/null
+30 1 1 * * sudo /snap/bin/certbot renew --quiet
+

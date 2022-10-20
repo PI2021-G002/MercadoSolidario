@@ -64,3 +64,10 @@ https://timonweb.com/django/https-django-development-server-ssl-certificate/
 /requirements.txt
 
 https://www.youtube.com/playlist?list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc # playlist top
+
+----- Dialogo modal
+https://www.youtube.com/watch?v=3dyQigrEj8A
+
+
+----- manutenção
+UPDATE Mercado_produtosolidario SET codigo_solidario= CONCAT("2022101022",SUBSTR(CONCAT("0000",id),-3)) ;
