@@ -8,34 +8,92 @@
       <h2>Atendimento - Mercado Solidário CS - Solidários</h2>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-8 offset-md-2 center table-responsive">
-      <table class="table table-bordered text-center">
-        <thead>
-          <th scope="col" class="p-3">Atendente</th>
-          <th scope="col" class="p-3">Data</th>
-          <th scope="col" class="p-3">Solidários</th>
-          <th scope="col" class="p-3">Restantes</th>
-        </thead>
-        <tbody>
-          <td class="p-3 align-middle">{{ context.rascunho.atendente }}</td>
-          <td class="p-3 align-middle">{{ context.rascunho.data }}</td>
-          <td id="solidarios" class="p-3 align-middle" style="font-size:30px;font-weight:bold;">{{ context.srestantes }}</td>
-          <td id="restantes" class="p-3 align-middle" style="font-size:30px;font-weight:bold;" >{{ context.srestantes }}</td>
-        </tbody>
-      </table>
+  <div class="row align-items-center border">
+    <div class="col center">
+      <div class="row align-items-center" >Voluntário</div>
+      <div class="row align-items-center">
+        {{ context.rascunho.atendente }}
+      </div>
     </div>
-    <div class="col-md center"></div>
+    <div class="col center">
+      <div class="row align-items-center">Data</div>
+      <div class="row align-items-center">
+        {{ context.rascunho.data }}
+      </div>
+    </div>
+    <div class="col">      
+      <div class="row">Solidários</div>
+      <div id="solidarios" class="row" style="font-size:30px;font-weight:bold;">
+        {{ context.srestantes }}
+      </div>
+    </div>
+    <div class="col">      
+      <div class="row">Restantes</div>
+      <div id="restantes" class="row" style="text-align:right;font-size:30px;font-weight:bold;">
+        {{ context.srestantes }}
+       </div>
+    </div>
+  </div>
+</div>
+<div class="container mt-2">
+  <div class="form-group row">
+    <div class="col-6 mt-auto">
+      <form method="POST">
+          {% csrf_token %}
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}  
+          {% endfor %}
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.produto.id_for_label }}">{{ form.produto.label }}</label>
+          {{ form.produto }}
+      </div>
+    </div>
+    <div class="col mt-auto">
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.solidarios.id_for_label }}"> {{ form.solidarios.label }}</label>
+        {{ form.solidarios }}
+      </div>
+    </div>
+    <div class="col mt-auto">
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.max_fam.id_for_label }}"> {{ form.max_fam.label }}</label>
+        {{ form.max_fam }}
+      </div>
+    </div>
   </div>
   <div class="row">
-    <div class="col-md-8 offset-md-2 center table-responsive">
-      <form method="POST">
-          {{ form.as_table }}
-          {% csrf_token %}
-          <div class="align-center mt-2">
-            <button type="submit" class="btn btn-primary text-center center mt-2">Continuar</button>
-          </div>
-      </form>
+    <div class="col mt_auto">
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.quantidade.id_for_label }}"> {{ form.quantidade.label }}</label>
+        {{ form.quantidade }}
+      </div>
+    </div>
+    <div class="col mt_auto">
+      <div class="fieldWrapper">
+        <fieldset>
+          <legend>{{ form.dataValidade.label }}</legend>
+          {% for item in context.estoque %}
+          <div class="myradio"> 
+              <label for="id_data_{{ forloop.counter0 }}" >
+                <input id="id_data_{{ forloop.counter0 }}" name="dataValidade" type="radio" value='{{ item.validade|date:"Y-m-d" }}' required>
+                {{ item.validade|date:"  d / m / Y" }}
+              </label>
+          </div> 
+          {% empty %}
+            Sem Estoque
+          {% endfor %}
+      </fieldset>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">       
+    <div class="mt-2 col-auto">
+        <button type="submit" class="btn btn-primary text-center center mt-2">Continuar</button>
+    </div>
+    </form>
+  </div>
+  <div>
+
       <script>
         $(function(){
             $('#id_quantidade').keyup(function(){
@@ -46,8 +104,8 @@
             });
          });
       </script>
-    </div>
   </div>
 </div>
+
 
 {% endblock conteudo %}

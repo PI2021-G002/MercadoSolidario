@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoacao,AtendimentoTemplate,ItensAtendimentoTemplate
+from .models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoacao,AtendimentoTemplate,ItensAtendimentoTemplate,Estoque
 
 class CategoriaAdmin(admin.ModelAdmin):
     fields = ['categoria']
@@ -38,3 +38,9 @@ class ItensAtendimentoTemplateAdmin(admin.ModelAdmin):
     list_display = ('id_atendimento','id_produto','quantidade')
 
 admin.site.register(ItensAtendimentoTemplate,ItensAtendimentoTemplateAdmin)
+
+class EstoqueAdmin(admin.ModelAdmin):
+    fields = ('id_produto','validade','quantidade')
+    list_display = ('id_produto','validade','quantidade')
+
+admin.site.register(Estoque,EstoqueAdmin)

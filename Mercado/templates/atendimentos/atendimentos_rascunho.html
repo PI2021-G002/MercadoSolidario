@@ -8,36 +8,43 @@
       <h2>Atendimento - Mercado Solidário CS - Solidários</h2>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-8 offset-md-2 center table-responsive">
-      <table id="tbTop" class="table table-bordered text-center">
-        <thead>
-          <th scope="col" class="p-3">Atendente</th>
-          <th scope="col" class="p-3">Data</th>
-          <th scope="col" class="p-3">Solidários</th>
-          <th scope="col" class="p-3">Restantes</th>
-        </thead>
-        <tbody>
-          <td class="p-3 align-middle">{{ context.rascunho.atendente }}</td>
-          <td class="p-3 align-middle">{{ context.rascunho.data }}</td>
-          <td class="p-3 align-middle" style="font-size:30px;font-weight:bold;" id="solidarios">{{ context.rascunho.solidarios }}</td>
-          <td class="p-3 align-middle" style="font-size:30px;font-weight:bold;" id="restantes">{{ context.rascunho.solidarios }}</td>
-        </tbody>
-      </table>
+  <div class="row align-items-center border">
+    <div class="col center">
+      <div class="row align-items-center" >Voluntário</div>
+      <div class="row align-items-center">
+        {{ context.rascunho.atendente }}
+      </div>
     </div>
-    <div class="col-md center"></div>
+    <div class="col center">
+      <div class="row align-items-center">Data</div>
+      <div class="row align-items-center">
+        {{ context.rascunho.data|date:"d / m /Y" }}
+      </div>
+    </div>
+    <div class="col">      
+      <div class="row">Solidários</div>
+      <div id="solidarios" class="row" style="font-size:30px;font-weight:bold;">
+        {{ context.rascunho.solidarios }}
+      </div>
+    </div>
+    <div class="col">      
+      <div class="row">Restantes</div>
+      <div id="restantes" class="row" style="text-align:right;font-size:30px;font-weight:bold;">
+        {{ context.rascunho.solidarios }}
+       </div>
+    </div>
   </div>
   <div class="row">
     <div class="col">
       <table id='tbProdutos' class="stripe hover table table-bordered" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
         <thead class="text-center"> 
                 <tr>
-                  <th>Produto</th>
-                  <th scope="col">Data de Validade</th>
-                  <th scope="col">Quantidade</th>
-                  <th scope="col">Solidários</th>
-                  <th scope="col">Subtotal</th>
-                  <th scope="col">Ação</th>
+                  <th data-priority="1">Produto</th>
+                  <th data-priority="4" scope="col">Data de Validade</th>
+                  <th data-priority="2" scope="col">Quantidade</th>
+                  <th data-priority="3" scope="col">Solidários</th>
+                  <th data-priority="3" scope="col">Subtotal</th>
+                  <th data-priority="4" scope="col">Ação</th>
                 </tr>
             </thead>
             <tbody class="text-center">
@@ -115,7 +122,7 @@
       </div>
       <script>
         var soma = 0;
-        $('#tbProduto tbody tr').each(function(){
+        $('#tbProdutos tbody tr').each(function(){
           var qtd = $(this).find('td').eq(2).html();
           var sol = $(this).find('td').eq(3).html();
           soma  += (qtd*sol);

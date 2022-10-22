@@ -27,7 +27,7 @@ class FormAtendimento(forms.Form):
     produto = forms.CharField(required=True,label='Produto Solidario')
     produto.widget.attrs['class'] = 'form-control'
     produto.widget.attrs['readonly'] = '1'
-    solidarios = forms.CharField(required=True,label='Solidarios')
+    solidarios = forms.CharField(required=True,label='Solidários')
     solidarios.widget.attrs['class'] = 'form-control'
     solidarios.widget.attrs['readonly'] = '1'    
     max_fam = forms.CharField(required=True,label='Máximo por Família')
@@ -35,7 +35,7 @@ class FormAtendimento(forms.Form):
     max_fam.widget.attrs['readonly'] = '1'    
     quantidade =forms.IntegerField(required=True)
     quantidade.widget.attrs['class'] = 'form-control'
-    dataValidade = forms.DateTimeField(required=True,widget=forms.SelectDateWidget(),label='Data de Validade')
+    dataValidade = forms.DateTimeField(required=True,label='Data de Validade')
     dataValidade.widget.attrs['class'] = 'form-control'
 
 
