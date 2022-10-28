@@ -1,6 +1,8 @@
 from asyncio.proactor_events import _ProactorBasePipeTransport
 from copy import copy
+from doctest import testfile
 from email import message
+from imp import acquire_lock
 from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
@@ -318,13 +320,39 @@ def concluirAtendimento(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         value = request.COOKIES.get('rascunho_id')
-        # copia a tabela para a tabela atendimento
+        # pega os dados do post e prepara para o processamento
         rascunho = AtendimentoRascunho.objects.get(id__exact=value)
+        itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+        
+        # verifica se há itens no estoque que podem ser dado baixa.
+        flag = 0
+        for item in itens:
+            print (item.id_codigo)
+            codProdSol = CodBarProdSol.objects.filter(id_produto__exact=item.id_codigo)
+            estoques = Estoque.objects.filter(id_produto=codProdSol.id_produto,validade=item.validade)
+            for estoque in estoques:
+              if estoque.quantidade - estoque.quantidade_saida >= item.quantidade:
+                flag += 1
+                
+        # se tiver todos os itens dá baixa no estoque
+        if itens.count() == flag:
+            for item in itens:
+              codProdSol = CodBarProdSol.objects.filter(id_codigo__exact=item.id_codigo)
+              estoques = Estoque.objects.filter(id_produto=codProdSol.id_produto,validade=item.validade)
+              for estoque in estoques:
+                if estoque.quantidade - estoque.quantidade_saida >= item.quantidade:
+                  estoque.quantidade_saida = estoque.quantidade_saida - item.quantidade
+                  estoque.save()
+        # se não tiver todos os itens gera mensagem de erro.
+        else:
+            response = HttpResponseRedirect('../rascunho')
+            messages.error(request, "Para um ou mais itens não foi encontrado estoque suficiente para dar baixa.")
+            return response
+        # copia a tabela para a tabela atendimento
         kwargs = model_to_dict(rascunho,exclude=['id'])
         kwargs['data'] = datetime.now()
         atendimento = Atendimento.objects.create(**kwargs)
         # copia os itens da tabela itensRascunho para a tabela itens
-        itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
         for item in itens:
             kwargs = model_to_dict(item,exclude=['id'])
             kwargs['id_atendimento']=atendimento

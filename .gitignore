@@ -131,3 +131,5 @@ dmypy.json
 #local
 .local
 *.pem
+dump*.sql
+

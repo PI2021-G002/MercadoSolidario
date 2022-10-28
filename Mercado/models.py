@@ -54,6 +54,7 @@ class Estoque(models.Model):
        on_delete = models.PROTECT
     )
     quantidade = models.IntegerField()
+    quantidade_saida = models.IntegerField(default=0)
     validade = models.DateField(auto_now=False, auto_now_add=False) 
     id_fonte = models.ForeignKey(
        FonteDoacao,
