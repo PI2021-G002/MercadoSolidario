@@ -32,8 +32,8 @@ class FormAtendimento(forms.Form):
     solidarios.widget.attrs['readonly'] = '1'    
     max_fam = forms.CharField(required=True,label='Máximo por Família')
     max_fam.widget.attrs['class'] = 'form-control'
-    max_fam.widget.attrs['readonly'] = '1'    
-    quantidade =forms.IntegerField(required=True)
+    max_fam.widget.attrs['readonly'] = '1'
+    quantidade =forms.IntegerField(required=True,initial=1,min_value=1)
     quantidade.widget.attrs['class'] = 'form-control'
     dataValidade = forms.DateTimeField(required=True,label='Data de Validade')
     dataValidade.widget.attrs['class'] = 'form-control'

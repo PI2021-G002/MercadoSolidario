@@ -6,7 +6,6 @@ backports.zoneinfo==0.2.1
 certifi==2022.5.18.1
 cffi==1.15.0
 cryptography==37.0.2
-decouple==0.0.7
 Django==4.0.4
 h11==0.13.0
 idna==3.3

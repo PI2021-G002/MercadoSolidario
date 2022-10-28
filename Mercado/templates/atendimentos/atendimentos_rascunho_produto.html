@@ -102,7 +102,7 @@
                var solidarios = parseFloat($('#solidarios').html()) || 0;
                $('#restantes').html(solidarios - (id_sol*quantidade));
             });
-         });
+            $('#id_quantidade').attr("max",$('#id_max_fam').val() )        });
       </script>
   </div>
 </div>

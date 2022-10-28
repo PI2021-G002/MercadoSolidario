@@ -1,0 +1,65 @@
+categoria	quantidade	unidade	preco_solidario	max_familia	codigo_solidario
+Abacaxi em calda	1	Lata	3	1	2022101022006
+Absorvente	1	Pct Grande	3	1	2022101022011
+Absorvente	1	Pct Pequeno	2	1	2022101022012
+Achocolatado	250	gr	2	1	2022101022013
+Achocolatado	400	gr	4	1	2022101022014
+Açúcar	1	kg	2	3	2022101022004
+Água Sanitária	2	l	1	1	2022101022016
+Arroz	1	kg	1	10	2022101022001
+Arroz	5	kg	5	2	2022101022017
+Atum	1	lata	2	1	2022101022047
+Bala	1	ptc	1	1	2022101022018
+Bolacha Doce	1	ptc	1	1	2022101022019
+Bolacha Lata	1	ptc	2	1	2022101022020
+Bolacha Salgada	1	ptc	1	1	2022101022021
+Bombom	1	ptc	1	1	2022101022022
+Bombril	1	ptc	1	1	2022101022023
+Café	250	gr	2	1	2022101022024
+Café	500	gr	4	1	2022101022025
+Canjica	500	gr	1	1	2022101022026
+Carne Seca	500	gr	4	1	2022101022027
+Cotonete	1	ptc	1	1	2022101022028
+Creme Dental	1	ptc	1	2	2022101022029
+Desodorante	1	frasco	2	1	2022101022030
+Detergente	500	ml	2	1	2022101022031
+Enlatado	1	lata	2	1	2022101022032
+Ervilha / Lentilha	500	gr	1	1	2022101022033
+Escova de Cabelo	1	un	2	1	2022101022034
+Escova de Dente	1	un	1	1	2022101022035
+Farinha de Aveia	500	gr	1	1	2022101022036
+Farinha de Mandioca	500	gr	1	1	2022101022037
+Farinha de Milho	500	gr	1	2	2022101022038
+Farinha de Tapioca	500	gr	1	1	2022101022039
+Farinha de Trigo	1	kg	2	2	2022101022040
+Farofa Pronta	500	gr	2	1	2022101022041
+Feijão	1	kg	2	1	2022101022002
+Feijão	1	kg	3	3	2022101022042
+Fio Dental	1	ptc	2	1	2022101022043
+Fubá	500	gr	1	2	2022101022044
+Fubá	1	kg	2	1	2022101022045
+Geleia	1	pote	2	1	2022101022046
+Leite	1	l	2	2	2022101022048
+Leite em Pó	200	gr	2	1	2022101022049
+Leite em Pó	400	gr	4	1	2022101022050
+Macarrão	1	pct 500g	1	2	2022101022003
+Maisena	1	ptc	1	1	2022101022051
+Massa pronta para bolo	400	gr	2	1	2022101022052
+Óleo	900	ml	3	1	2022101022005
+Papel Higiênico	1	ptc	2	4	2022101022053
+Pêssego em Caldas	1	lata	3	1	2022101022054
+Pipoca	500	gr	1	2	2022101022055
+Polvilho Doce	500	gr	1	1	2022101022056
+Sabão em Pedra	1	un	1	1	2022101022057
+Sabão em Pó	500	gr	2	1	2022101022061
+Sabão em Pó	1	kg	4	1	2022101022062
+Sabonete	1	un	1	2	2022101022058
+Sal	1	kg	2	1	2022101022059
+Sardinha	125	g	2	1	2022101022015
+Shampoo	1	un	3	1	2022101022060
+Suco	1	garrafa	3	1	2022101022063
+Tempero	1	sachê	1	1	2022101022064
+Torrada	1	ptc	2	1	2022101022065
+Trigo para Kibe	500	gr	1	1	2022101022066
+Uvas Passas / Nozes	1	ptc	2	1	2022101022067
+Vinagre	750	ml	1	1	2022101022068

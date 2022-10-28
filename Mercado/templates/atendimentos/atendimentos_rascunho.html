@@ -90,48 +90,82 @@
           .columns.adjust()
           .responsive.recalc();
           } );
+          function toggleLista(){
+            $('#lista').attr('class', function(index, attr){ return attr == 'collapse' ? 'collapse.show' : 'collapse';});
+          }
+          function toggleScanner(){
+            $('#scanner').attr('class', function(index, attr){ return attr == 'collapse' ? 'collapse.show' : 'collapse';});
+          }
       </script>
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm">
+</div>
+<div class="containner">
+  <div class="row mt-2">
+    <div class="col">
+      <button class="btn btn-sm btn-warning"  onclick="toggleLista();">Mostra/Esconde Lista</button>
     </div>
     <div class="col">
-      <div class="text-center">Clique em "start scanning" e aponte para o código de barras</div>
-      <div id="reader" width="600px"></div>
-      <div class="text-center mt-3">
-        <form name="formCodigo" id="formCodigo" method="POST" action="codigo">
-          <div class="form-group">
-            <label for="codigo">Código de barras</label>
-            <input type="text" name="codigo" id="codigo" class="form-control-lg text-center" required ></input>
-            <input type="hidden" name="srestantes" id="srestantes" value="{{ context.rascunho.solidarios }}" required ></input>
-            {% csrf_token %}
-          </div>
-          <button type="submit" class="btn btn-primary text-center">Continuar</button>
-
-        </form>
+      <button class="btn btn-sm btn-warning"  onclick="toggleScanner();">Mostra/Esconde Scanner</button>
+    </div>
+  </div>
+  <div class="row overflow-auto border" style="margin-top:2em;margin-bottom: 4em;">
+    <div style="max-height:300px; min-width: 300px;" class="row overflow-auto">
+      <div id="lista" class="collapse.show">
+        <div class="text-center">Clique no item abaixo para adicioná-lo na lista</div>
+        {% for produto in context.produtoSolidario %}
+      <div class="card">
+        <button class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-outline-dark{% else %}btn-outline-info{% endif %}"
+          onclick="$('#codigo').val( '{{produto.codigo_solidario }}' ); $('#formCodigo').submit()">
+          {{ produto }}  -  {{ produto.preco_solidario }} Solidário{% if produto.preco_solidario > 1 %}s{%endif%}
+        </button>
       </div>
-      <div class="text-center mt-5">
-        <form name="formConcluir" id="formConcluir" method="POST" action="concluir">
-          <div class="form-group">
-            {% csrf_token %}
-          </div>
-          <button type="submit" class="btn btn-success text-center">Concluir e encerrar Atendimento</button>
-
-        </form>
+      {% endfor%}
+    </div>
+    </div>
+  </div>
+  <div class="row overflow-auto border">
+    <div class="col-sm">
+    </div>
+    <div id="scanner" class="collapse.show">
+      <div class="col">
+        <div class="mt-2 text-center">Clique em "start scanning" e aponte para o código de barras ou QRCODE</div>
+        <div id="reader" width="600px"></div>
+        <div class="text-center mt-3">
+          <form name="formCodigo" id="formCodigo" method="POST" action="codigo">
+            <div class="form-group">
+              <label for="codigo">Código de barras</label>
+              <input type="text" name="codigo" id="codigo" class="form-control-lg text-center" required ></input>
+              <input type="hidden" name="srestantes" id="srestantes" value="{{ context.rascunho.solidarios }}" required ></input>
+              {% csrf_token %}
+            </div>
+            <button type="submit" class="btn btn-primary text-center mt-2">Continuar</button>
+          </form>
+        </div>
       </div>
-      <script>
-        var soma = 0;
-        $('#tbProdutos tbody tr').each(function(){
-          var qtd = $(this).find('td').eq(2).html();
-          var sol = $(this).find('td').eq(3).html();
-          soma  += (qtd*sol);
-          $(this).find('td').eq(4).html(qtd*sol);
-          var solidarios = parseFloat($('#solidarios').html()) || 0;
-          $('#restantes').html(solidarios - soma);
-          $('input#srestantes').val(solidarios - soma);
-        });
-      </script>
+    </div>
+  </div>
+  <div class="row">
+    <div class="text-center mt-5">
+      <form name="formConcluir" id="formConcluir" method="POST" action="concluir">
+        <div class="form-group">
+          {% csrf_token %}
+        </div>
+        <button type="submit" class="btn btn-success text-center">Concluir e encerrar Atendimento</button>
+      </form>
+    </div>
+    <script>
+      var soma = 0;
+      $('#tbProdutos tbody tr').each(function(){
+        var qtd = $(this).find('td').eq(2).html();
+        var sol = $(this).find('td').eq(3).html();
+        soma  += (qtd*sol);
+        $(this).find('td').eq(4).html(qtd*sol);
+        var solidarios = parseFloat($('#solidarios').html()) || 0;
+        $('#restantes').html(solidarios - soma);
+        $('input#srestantes').val(solidarios - soma);
+      });
+    </script>
     </div>
     <div class="col-sm">
     </div>

@@ -71,3 +71,16 @@ https://www.youtube.com/watch?v=3dyQigrEj8A
 
 ----- manutenção
 UPDATE Mercado_produtosolidario SET codigo_solidario= CONCAT("2022101022",SUBSTR(CONCAT("0000",id),-3)) ;
+delimiter $$ 
+create trigger `produto_QRCode` before insert on Mercado_produtosolidario for each row begin set new.codigo_solidario = concat('2022101022',SUBSTR(concat('000',LAST_INSERT_ID()+1),-3));end$$
+delimiter ;
+
+to do:
+-- debitar compra do estoque
+-- cadastro do codigo codigo_solidario
+-- relatório de entrega
+-- relatorio de estoque x entrega
+-- Cestas básica, emergencial, x e extra.
+-- na interface de código do produto colocar botão para quantidade
+-- debitar itens no fechmento
+-- colocar lista de produtos na interface de rascunho

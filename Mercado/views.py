@@ -20,11 +20,9 @@ from django.forms import model_to_dict
 
 # Create your views here.
 
-
 def logout_view(request):
     logout(request)
     return render(request, 'index.html')
-
 
 def fromCursorToTableData(cursor, rows):
     x = cursor.description
@@ -37,7 +35,6 @@ def fromCursorToTableData(cursor, rows):
             i = i+1
         resultsList.append(d)
     return resultsList
-
 
 @login_required
 def estoque_listagem(request):
@@ -106,13 +103,12 @@ def entradaEstoque(request):
                 quem_cadastrou = request.POST.__getitem__('quem_cadastrou')
                 # Cria registro e mostra mensagem de sucesso.
                 estoque = Estoque.objects.create(id_produto=id_produto,quantidade=quantidade,validade=validade,id_fonte=id_fonte,quem_cadastrou=quem_cadastrou,data=data);
-                Estoque.objects.filter(id=estoque.id).update(codigo_solidario='2022101022'+f'{estoque.id:03d}' )
                 messages.success(request, "Item de Estoque Criado com Sucesso")
                 # sai da classe e volta na tela de scan com a mensagem
                 return HttpResponseRedirect('../entrada/')
             else:
                 form = FormEntradaEstoqueProduto(request.POST)
-                messages.error(request,"Data de validade menor ou igual a hoje. O produto está vencido?")
+                messages.error(request,"Data de validade menor ou igual a hoje. O produto está vencido ou sem estoque?")
         else:
             # É o post com o código para procurar na base
             codigo_barras=request.POST.__getitem__('codigo')
@@ -155,7 +151,6 @@ def iniciaRascunho(request):
     if request.method == 'POST':
         solidarios = request.POST.__getitem__('solidario')
         value = request.COOKIES.get('rascunho_id')
-
         if value is None:
             rascunho = AtendimentoRascunho.objects.create(tipo='mercado',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios);
             if rascunho:
@@ -169,9 +164,11 @@ def iniciaRascunho(request):
                 return response
     rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
     itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
     context = {
        'rascunho':rascunho,
-       'itens':itens
+       'itens':itens,
+       'produtoSolidario':produtoSolidario
     }
     return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context})
 
@@ -206,17 +203,18 @@ def codigoMercado(request):
                 # sai da classe e volta na tela de scan com a mensagem
                 rascunho = AtendimentoRascunho.objects.get(id__exact=atendimento.id)   
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
                 context = {
                     'rascunho':rascunho,
                     'itens':itens,
                     'produto':produto,
-                    'codigo':codbar
+                    'codigo':codbar,
+                    'produtoSolidario':produtoSolidario
                 }
-
                 return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
             else:
                 form = FormAtendimento(request.POST)
-                messages.error(request,"Data de validade menor ou igual a hoje. O produto está vencido?")
+                messages.error(request,"Data de validade menor ou igual a hoje. O produto está vencido ou sem estoque?")
                 rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                 estoque = Estoque.objects.filter(id_produto_id=request.POST.__getitem__('idp')).order_by('validade')
                 context = {
@@ -230,25 +228,25 @@ def codigoMercado(request):
             if codigo_barras.startswith("202210") : 
                # para QRCode
                produto = ProdutoSolidario.objects.filter(codigo_solidario=codigo_barras).first()
-               if produto :
-                   prodsol = CodBarProdSol.objects.filter(id_produto_id=produto.id).first()
+               prodsol = CodBarProdSol.objects.filter(id_produto_id=produto.id).first()
+               if produto and prodsol:
                    codigo_barras = prodsol.codigo_barras
                else:
                     #não encontrou o produto
                     messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado. (qrok)")
                     rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                     itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
                     context = {
                     'rascunho':rascunho,
-                    'itens':itens
+                    'itens':itens,
+                    'produtoSolidario':produtoSolidario
                     }
                     return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
-
             else :
                #  para códigos de barras
                prodsol=CodBarProdSol.objects.filter(codigo_barras=codigo_barras).first()
               
-
             # se o código já está cadastrado
             if prodsol :
                 produto=ProdutoSolidario.objects.get(id__exact=prodsol.id_produto_id)
@@ -259,7 +257,7 @@ def codigoMercado(request):
                     'max_fam':produto.max_familia,
                     'solidarios':produto.preco_solidario,
                     'codigo_barras':codigo_barras,
-                    'id_prodsol':prodsol.id
+                    'id_prodsol':prodsol.id,
                     })
                 rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
@@ -278,17 +276,21 @@ def codigoMercado(request):
                 messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado.")
                 rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
                 context = {
-                'rascunho':rascunho,
-                'itens':itens
+                    'rascunho':rascunho,
+                    'itens':itens,
+                    'produtoSolidario':produtoSolidario
                 }
                 return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
-    else:
+    else: # é um GET - informar o form e carregar os dados
         rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
         itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+        produtoSolidario=ProdutoSolidario.objects.all()
         context = {
-        'rascunho':rascunho,
-        'itens':itens
+            'rascunho':rascunho,
+            'itens':itens,
+            'produtoSolidario':produtoSolidario
         }
         return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
 
