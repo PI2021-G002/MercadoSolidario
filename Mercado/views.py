@@ -385,13 +385,12 @@ def relatoriosConsumoPeriodo(request):
       # Se for o primeiro GET (a partir do menu) mostra o relátorio do mês corrente
       #https://stackoverflow.com/questions/37396329/finding-first-day-of-the-month-in-python
       #https://www.tutorialspoint.com/number-of-days-in-a-month-in-python#:~:text=Practical%20Data%20Science%20using%20Python&text=Suppose%20we%20have%20one%20year,then%20the%20result%20is%2029.&text=if%20m%20is%20in%20the,31%2C%20otherwise%2C%20return%2030.
-
-      inicio = datetime.today().replace(day=1)
-      final  = datetime.today().replace(day=numberOfDays( inicio.year,inicio.month ))
+      inicial = datetime.today().replace(day=1)
+      final  = datetime.today().replace(day=numberOfDays( inicial.year,inicial.month ))
     else:
-        # se for um POST
-        inicio = request.dt_inicio
-        final  = request.dt_final
+      # se for um POST
+      inicial = datetime.strptime(request.POST.__getitem__('inicial'), '%d/%m/%Y').date()
+      final  = datetime.strptime(request.POST.__getitem__('final'), '%d/%m/%Y').date()
 
     #with connection.cursor() as cursor:
     #    cursor.execute(
@@ -399,14 +398,16 @@ def relatoriosConsumoPeriodo(request):
     #    row = cursor.fetchall()
     #    result = fromCursorToTableData(cursor, row)
 
-    atendimentos = Atendimento.objects.filter(data__gte=inicio,data__lte=final)
-
+    atendimentos = Atendimento.objects.filter(data__gte=inicial,data__lte=final)
+    print(atendimentos)
+    print(inicial)
+    print(final)
     context = {
-        'atendimentos' : atendimentos
+        'atendimentos' : atendimentos,
+        'inicial': inicial,
+        'final': final
     }
-    return render(request,'relatorios/consumo_periodo.html',context)
-
-    
+    return render(request,'relatorios/consumo_periodo.html',{ 'context': context })
 
 def numberOfDays( y, m):
       leap = 0

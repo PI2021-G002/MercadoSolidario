@@ -9,6 +9,32 @@
     </div>
   </div>
   <div class="row">
+    <div class="container">
+      <div class="row flex justify-center">
+        <form method="POST">
+          {% csrf_token %}
+          <h1>Escolha as Datas de início e final. (padrão, mês corrente)</h1>
+        <div class="col">
+          <div id="inicio-picker">
+            <div>
+              Data Inicial
+            </div>
+            <input id="inicial" name="inicial" type="text" value='{{ context.inicial|date:"d/m/Y" }}'>
+          </div>
+        </div>
+        <div class="col">
+          <div id="final-picker">
+          <div>Data Final</div>
+            <input id="final" name="final" type="text" value='{{ context.final|date:"d/m/Y"  }}'>
+          </div>
+          <div>
+            <button class="btn btn-outline-info" type="submit">Pesquisar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
     <div class="col">
       <table id="tbProdutos" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
         <thead> 
@@ -46,7 +72,20 @@
                 } )
                 .columns.adjust()
                 .responsive.recalc();
+
             } );
+            inicio_div = $('#inicio-picker input').datepicker({
+              autoclose: false,
+              format: 'dd/mm/yyyy',
+            }).on('changeDate', function(e) {
+               // `e` here contains the extra attributes
+               $('#final-picker input').datepicker('clearDates');
+               //final_div.setStartDate($('#inicial').val())
+            });
+            final_div = $('#final-picker input').datepicker({
+              autoclose: false,
+              format: 'dd/mm/yyyy'
+            })    
         </script>
     </div>
   </div>
