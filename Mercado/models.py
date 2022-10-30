@@ -62,6 +62,12 @@ class Estoque(models.Model):
     )
     data = models.DateField(auto_now=False, auto_now_add=True,null=True)
     quem_cadastrou = models.CharField(max_length=50)
+    class Meta:
+        verbose_name = "Estoque"
+        verbose_name_plural = "Estoque"    
+    @property
+    def em_estoque(self):
+        return self.quantidade - self.quantidade_saida
 
 class AtendimentoRascunho(models.Model):
     tipo = models.CharField(max_length=50)

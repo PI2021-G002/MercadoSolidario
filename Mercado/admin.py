@@ -40,7 +40,7 @@ class ItensAtendimentoTemplateAdmin(admin.ModelAdmin):
 admin.site.register(ItensAtendimentoTemplate,ItensAtendimentoTemplateAdmin)
 
 class EstoqueAdmin(admin.ModelAdmin):
-    fields = ('id_produto','validade','quantidade')
-    list_display = ('id_produto','validade','quantidade')
+    fields = ('id_produto','validade','quantidade','quantidade_saida')
+    list_display = ('id_produto','validade','quantidade','quantidade_saida','em_estoque')
 
 admin.site.register(Estoque,EstoqueAdmin)

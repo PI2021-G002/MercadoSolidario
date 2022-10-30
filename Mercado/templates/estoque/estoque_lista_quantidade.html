@@ -24,14 +24,22 @@
           <tbody>
               {% for produto in estoque %}
               <div class="row">
-                <tr>
+                {% if produto.quantidade < produto.estoque_minimo %}
+                  <tr style="background-color: red;color:white;font-weight: bold;">
+                {% else %}
+                  <tr >
+                {% endif %}
                     <div class="col"><td>{{ produto.produto}}</td></div>
                     <div class="col"></div><td>{{ produto.quantidade }}</td></div>
                     <div class="col"></div><td>{{ produto.estoque_minimo }}</td></div>
                 </tr>
               </div>
               {% endfor %}
+              
           </tbody>
+          <tfoot>
+            <p><span style="background-color: red;color:white;font-weight: bold;">* &nbsp; </span>Estoque abaixo do mínimo cadastrado</p>
+          </tfoot>
         </table>
       </div>
       <script lang="javascript">

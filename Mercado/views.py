@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.utils.formats import date_format
 from pkg_resources import require
 from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol
+from django.db.models import Q,F
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
@@ -41,15 +42,15 @@ def fromCursorToTableData(cursor, rows):
 @login_required
 def estoque_listagem(request):
     return render(request, 'estoque/estoque_lista.html',
-                  {
-                      'estoque': Estoque.objects.all().order_by('id_produto')
+                  {   # o filter remove da listagem os itens com quantidade de Entrada = quantidade_saida, ou seja, zero de estoque
+                      'estoque': Estoque.objects.all().filter(~Q(quantidade=F('quantidade_saida'))).order_by('id_produto')
                   })
 
 @login_required
 def estoque_listagem_validade(request):
     return render(request, 'estoque/estoque_lista_validade.html',
-                  {
-                      'estoque': Estoque.objects.all().order_by('validade').annotate(test=Concat('validade','validade'))
+                  {   # o filter remove da listagem os itens com quantidade de Entrada = quantidade_saida, ou seja, zero de estoque
+                      'estoque': Estoque.objects.all().filter(~Q(quantidade=F('quantidade_saida')))
                   })
 
 @login_required
@@ -63,7 +64,7 @@ def estoque_listagem_prodSol(request):
 def getEstoquePorProduto():
     with connection.cursor() as cursor:
         cursor.execute(
-            'select concat(cat.Categoria," ",pro.quantidade,pro.unidade) as produto ,sum(est.quantidade) as quantidade, pro.estoque_minimo from Mercado_estoque est, Mercado_categoria cat, Mercado_produtosolidario pro where cat.id = pro.id_categoria_id and est.id_produto_id = pro.id group by est.id_produto_id ORDER BY produto;')
+            'select concat(cat.Categoria," ",pro.quantidade,pro.unidade) as produto ,sum(est.quantidade - est.quantidade_saida) as quantidade, pro.estoque_minimo from Mercado_estoque est, Mercado_categoria cat, Mercado_produtosolidario pro where cat.id = pro.id_categoria_id and est.id_produto_id = pro.id group by est.id_produto_id ORDER BY produto;')
         row = cursor.fetchall()
         result = fromCursorToTableData(cursor, row)
     return result
@@ -327,25 +328,23 @@ def concluirAtendimento(request):
         # verifica se há itens no estoque que podem ser dado baixa.
         flag = 0
         for item in itens:
-            print (item.id_codigo)
-            codProdSol = CodBarProdSol.objects.filter(id_produto__exact=item.id_codigo)
-            estoques = Estoque.objects.filter(id_produto=codProdSol.id_produto,validade=item.validade)
+            #print(codProdSol)
+            estoques = Estoque.objects.filter(id_produto=item.id_codigo.id_produto,validade=item.validade)
             for estoque in estoques:
               if estoque.quantidade - estoque.quantidade_saida >= item.quantidade:
                 flag += 1
                 
         # se tiver todos os itens dá baixa no estoque
-        if itens.count() == flag:
+        
+        if len(itens)+1 == flag:
             for item in itens:
-              codProdSol = CodBarProdSol.objects.filter(id_codigo__exact=item.id_codigo)
-              estoques = Estoque.objects.filter(id_produto=codProdSol.id_produto,validade=item.validade)
+              estoques = Estoque.objects.filter(id_produto=item.id_codigo.id_produto,validade=item.validade)
               for estoque in estoques:
-                if estoque.quantidade - estoque.quantidade_saida >= item.quantidade:
-                  estoque.quantidade_saida = estoque.quantidade_saida - item.quantidade
+                  estoque.quantidade_saida = estoque.quantidade_saida + item.quantidade
                   estoque.save()
         # se não tiver todos os itens gera mensagem de erro.
         else:
-            response = HttpResponseRedirect('../rascunho')
+            response = HttpResponseRedirect("rascunho")
             messages.error(request, "Para um ou mais itens não foi encontrado estoque suficiente para dar baixa.")
             return response
         # copia a tabela para a tabela atendimento
@@ -377,3 +376,49 @@ def concluirAtendimento(request):
 
 def emDesenvolvimento(request):
     return render(request,'em_desenvolvimento.html')
+
+    
+@login_required
+def relatoriosConsumoPeriodo(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'GET':
+      # Se for o primeiro GET (a partir do menu) mostra o relátorio do mês corrente
+      #https://stackoverflow.com/questions/37396329/finding-first-day-of-the-month-in-python
+      #https://www.tutorialspoint.com/number-of-days-in-a-month-in-python#:~:text=Practical%20Data%20Science%20using%20Python&text=Suppose%20we%20have%20one%20year,then%20the%20result%20is%2029.&text=if%20m%20is%20in%20the,31%2C%20otherwise%2C%20return%2030.
+
+      inicio = datetime.today().replace(day=1)
+      final  = datetime.today().replace(day=numberOfDays( inicio.year,inicio.month ))
+    else:
+        # se for um POST
+        inicio = request.dt_inicio
+        final  = request.dt_final
+
+    #with connection.cursor() as cursor:
+    #    cursor.execute(
+    #        'select * from concat(cat.Categoria," ",pro.quantidade,pro.unidade) as produto ,sum(est.quantidade) as quantidade, pro.estoque_minimo from Mercado_estoque est, Mercado_categoria cat, Mercado_produtosolidario pro where cat.id = pro.id_categoria_id and est.id_id = pro.id group by est.id_produto_id ORDER BY produto;')
+    #    row = cursor.fetchall()
+    #    result = fromCursorToTableData(cursor, row)
+
+    atendimentos = Atendimento.objects.filter(data__gte=inicio,data__lte=final)
+
+    context = {
+        'atendimentos' : atendimentos
+    }
+    return render(request,'relatorios/consumo_periodo.html',context)
+
+    
+
+def numberOfDays( y, m):
+      leap = 0
+      if y% 400 == 0:
+         leap = 1
+      elif y % 100 == 0:
+         leap = 0
+      elif y% 4 == 0:
+         leap = 1
+      if m==2:
+         return 28 + leap
+      list = [1,3,5,7,8,10,12]
+      if m in list:
+         return 31
+      return 30
