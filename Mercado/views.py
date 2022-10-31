@@ -329,7 +329,7 @@ def concluirAtendimento(request):
         flag = 0
         for item in itens:
             #print(codProdSol)
-            estoques = Estoque.objects.filter(id_produto=item.id_codigo.id_produto,validade=item.validade)
+            estoques = Estoque.objects.filter(id_produto=item.id_codigo,validade=item.validade)
             for estoque in estoques:
               if estoque.quantidade - estoque.quantidade_saida >= item.quantidade:
                 flag += 1
@@ -338,7 +338,7 @@ def concluirAtendimento(request):
         
         if len(itens)+1 == flag:
             for item in itens:
-              estoques = Estoque.objects.filter(id_produto=item.id_codigo.id_produto,validade=item.validade)
+              estoques = Estoque.objects.filter(id_produto=item.id_codigo,validade=item.validade)
               for estoque in estoques:
                   estoque.quantidade_saida = estoque.quantidade_saida + item.quantidade
                   estoque.save()
