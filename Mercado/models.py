@@ -103,7 +103,7 @@ class ItensAtendimento(models.Model):
        on_delete = models.DO_NOTHING
     )
     id_codigo = models.ForeignKey(
-       CodBarProdSol,
+       ProdutoSolidario,
        on_delete = models.DO_NOTHING
     )
     produto = models.CharField(max_length=50) # gravado para facilitar relatórios

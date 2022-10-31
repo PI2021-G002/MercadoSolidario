@@ -333,10 +333,10 @@ def concluirAtendimento(request):
             for estoque in estoques:
               if estoque.quantidade - estoque.quantidade_saida >= item.quantidade:
                 flag += 1
-                
+                break
+       
         # se tiver todos os itens dá baixa no estoque
-        
-        if len(itens)+1 == flag:
+        if len(itens) == flag:
             for item in itens:
               estoques = Estoque.objects.filter(id_produto=item.id_codigo,validade=item.validade)
               for estoque in estoques:
@@ -355,7 +355,7 @@ def concluirAtendimento(request):
         for item in itens:
             kwargs = model_to_dict(item,exclude=['id'])
             kwargs['id_atendimento']=atendimento
-            tmp = CodBarProdSol.objects.get(id__exact=kwargs['id_codigo'])
+            tmp = ProdutoSolidario.objects.get(id__exact=kwargs['id_codigo'])
             kwargs['id_codigo']=tmp
             tmp = ItensAtendimento.objects.create(**kwargs)
             
