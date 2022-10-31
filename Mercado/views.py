@@ -196,7 +196,7 @@ def codigoMercado(request):
                 produto = request.POST.__getitem__('produto')
                 solidarios = int(float((request.POST.__getitem__('solidarios'))))
                 item = ItensAtendimentoRascunho.objects.create( id_atendimento=atendimento,
-                                                                id_codigo=codbar,
+                                                                id_codigo=codbar.id_produto,
                                                                 produto=produto,
                                                                 quantidade=quantidade,
                                                                 validade=validade,

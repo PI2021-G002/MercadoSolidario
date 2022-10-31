@@ -76,11 +76,20 @@ create trigger `produto_QRCode` before insert on Mercado_produtosolidario for ea
 delimiter ;
 
 to do:
--- debitar compra do estoque
+-- debitar compra do estoque - feito
 -- cadastro do codigo codigo_solidario
--- relatório de entrega
+-- relatório de entrega - feito
 -- relatorio de estoque x entrega
 -- Cestas básica, emergencial, x e extra.
 -- na interface de código do produto colocar botão para quantidade
--- debitar itens no fechmento
--- colocar lista de produtos na interface de rascunho
+-- debitar itens no fechmento - feito
+-- colocar lista de produtos na interface de rascunho -feito
+
+cd ~/projeto/MercadoSolidario
+for a in `find . -mtime 0 -type f -ls  | grep -v .git | grep -v txt | grep -v sql | grep -v Install | grep -v xlsx | grep -v cache | gawk '{print $NF}'`; do mkdir -p /var/www/html/MercadoSolidario/`dirname $a`;cp -v $a /var/www/html/MercadoSolidario/`dirname $a`/;done
+cd /var/www/html/MercadoSolidario/
+source mercado/bin/activate
+python3 manage.py migrate
+
+sudo systemctl restart apache2.service
+

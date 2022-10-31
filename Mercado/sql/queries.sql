@@ -1,0 +1,1 @@
+select c.categoria, p.quantidade, p.unidade, p.preco_solidario, p.max_familia, p.codigo_solidario from Mercado_produtosolidario p, Mercado_categoria c where c.id = p.id_categoria_id order by categoria;
