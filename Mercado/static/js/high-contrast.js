@@ -37,6 +37,7 @@
         if (this.currentState)
             body.classList.add(this.cssClass);
         else
+          if (body)
             body.classList.remove(this.cssClass);
     }
 

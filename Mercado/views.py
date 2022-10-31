@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.utils.formats import date_format
 from pkg_resources import require
 from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol
-from django.db.models import Q,F
+from django.db.models import Q,F,Sum
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
@@ -398,12 +398,13 @@ def relatoriosConsumoPeriodo(request):
     #    row = cursor.fetchall()
     #    result = fromCursorToTableData(cursor, row)
 
-    atendimentos = Atendimento.objects.filter(data__gte=inicial,data__lte=final)
+    atendimentos = Atendimento.objects.filter(data__gte=inicial,data__lte=final).values_list('id')
     print(atendimentos)
-    print(inicial)
-    print(final)
+    itensAtendimentos = ItensAtendimento.objects.filter(id_atendimento_id__in=atendimentos).values('produto').annotate(tot_itens=Sum('quantidade'))
+    print(itensAtendimentos)
     context = {
         'atendimentos' : atendimentos,
+        'itens_atendimentos' : itensAtendimentos,
         'inicial': inicial,
         'final': final
     }
