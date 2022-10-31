@@ -410,6 +410,10 @@ def relatoriosConsumoPeriodo(request):
     }
     return render(request,'relatorios/consumo_periodo.html',{ 'context': context })
 
+@login_required
+def relatoriosNecessidadePeriodo(request):
+    emDesenvolvimento(request)
+
 def numberOfDays( y, m):
       leap = 0
       if y% 400 == 0:
