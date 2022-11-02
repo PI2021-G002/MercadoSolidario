@@ -82,14 +82,19 @@ to do:
 -- relatorio de estoque x entrega
 -- Cestas básica, emergencial, x e extra.
 -- na interface de código do produto colocar botão para quantidade
--- debitar itens no fechmento - feito
+-- debitar itens no fechamento - feito
 -- colocar lista de produtos na interface de rascunho -feito
 
-cd ~/projeto/MercadoSolidario
+
+--- Script para deploy automatizado
+#https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project
+
+-- /home/mercadocs/projeto/deploy.bash
+#!/bin/bash
+cd $GIT_CHECKOUT_DIR
 for a in `find . -mtime 0 -type f -ls  | grep -v .git | grep -v txt | grep -v sql | grep -v Install | grep -v xlsx | grep -v cache | gawk '{print $NF}'`; do mkdir -p /var/www/html/MercadoSolidario/`dirname $a`;cp -v $a /var/www/html/MercadoSolidario/`dirname $a`/;done
 cd /var/www/html/MercadoSolidario/
 source mercado/bin/activate
 python3 manage.py migrate
-
+python3 manage.py migrate
 sudo systemctl restart apache2.service
-
