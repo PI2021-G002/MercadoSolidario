@@ -58,13 +58,16 @@ class Estoque(models.Model):
     validade = models.DateField(auto_now=False, auto_now_add=False) 
     id_fonte = models.ForeignKey(
        FonteDoacao,
-       on_delete = models.PROTECT
+       on_delete = models.PROTECT,
+       verbose_name = 'Fonte da Doação'
     )
     data = models.DateField(auto_now=False, auto_now_add=True,null=True)
     quem_cadastrou = models.CharField(max_length=50)
     class Meta:
         verbose_name = "Estoque"
-        verbose_name_plural = "Estoque"    
+        verbose_name_plural = "Estoque" 
+        ordering = ['id_produto','validade','id_fonte']
+
     @property
     def em_estoque(self):
         return self.quantidade - self.quantidade_saida
