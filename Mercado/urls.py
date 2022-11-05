@@ -28,5 +28,5 @@ urlpatterns = [
     path('Atendimento/cestaemergencial',emDesenvolvimento,name='cesta básica'),
     path('Relatorios',TemplateView.as_view(template_name='relatorios/relatorios.html'),name='Relatórios'),
     path('Relatorios/consumo-periodo',relatoriosConsumoPeriodo,name='Consumo por Período'),
-    path('Relatorios/necessidade-periodo',emDesenvolvimento,name='Necessidade por Período')
+    path('Relatorios/necessidade-periodo',relatoriosNecessidadePeriodo,name='Necessidade por Período')
 ]

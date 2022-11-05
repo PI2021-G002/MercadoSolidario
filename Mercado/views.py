@@ -39,6 +39,21 @@ def fromCursorToTableData(cursor, rows):
         resultsList.append(d)
     return resultsList
 
+def numberOfDays( y, m):
+      leap = 0
+      if y% 400 == 0:
+         leap = 1
+      elif y % 100 == 0:
+         leap = 0
+      elif y% 4 == 0:
+         leap = 1
+      if m==2:
+         return 28 + leap
+      list = [1,3,5,7,8,10,12]
+      if m in list:
+         return 31
+      return 30
+
 @login_required
 def estoque_listagem(request):
     return render(request, 'estoque/estoque_lista.html',
@@ -50,7 +65,7 @@ def estoque_listagem(request):
 def estoque_listagem_validade(request):
     return render(request, 'estoque/estoque_lista_validade.html',
                   {   # o filter remove da listagem os itens com quantidade de Entrada = quantidade_saida, ou seja, zero de estoque
-                      'estoque': Estoque.objects.all().filter(~Q(quantidade=F('quantidade_saida')))
+                      'estoque': Estoque.objects.all().filter(~Q(quantidade=F('quantidade_saida'))).order_by('validade')
                   })
 
 @login_required
@@ -404,9 +419,9 @@ def relatoriosConsumoPeriodo(request):
     #    result = fromCursorToTableData(cursor, row)
 
     atendimentos = Atendimento.objects.filter(data__gte=inicial,data__lte=final).values_list('id')
-    print(atendimentos)
+    #print(atendimentos)
     itensAtendimentos = ItensAtendimento.objects.filter(id_atendimento_id__in=atendimentos).values('produto').annotate(tot_itens=Sum('quantidade'))
-    print(itensAtendimentos)
+    #print(itensAtendimentos)
     context = {
         'atendimentos' : atendimentos,
         'itens_atendimentos' : itensAtendimentos,
@@ -417,19 +432,36 @@ def relatoriosConsumoPeriodo(request):
 
 @login_required
 def relatoriosNecessidadePeriodo(request):
-    emDesenvolvimento(request)
+    # if this is a POST request we need to process the form data
+    if request.method == 'GET':
+      # Se for o primeiro GET (a partir do menu) mostra o relátorio do mês corrente
+      #https://stackoverflow.com/questions/37396329/finding-first-day-of-the-month-in-python
+      #https://www.tutorialspoint.com/number-of-days-in-a-month-in-python#:~:text=Practical%20Data%20Science%20using%20Python&text=Suppose%20we%20have%20one%20year,then%20the%20result%20is%2029.&text=if%20m%20is%20in%20the,31%2C%20otherwise%2C%20return%2030.
+      inicial = datetime.today().replace(day=1)
+      final  = datetime.today().replace(day=numberOfDays( inicial.year,inicial.month ))
+    else:
+      # se for um POST
+      inicial = datetime.strptime(request.POST.__getitem__('inicial'), '%d/%m/%Y').date()
+      final  = datetime.strptime(request.POST.__getitem__('final'), '%d/%m/%Y').date()
 
-def numberOfDays( y, m):
-      leap = 0
-      if y% 400 == 0:
-         leap = 1
-      elif y % 100 == 0:
-         leap = 0
-      elif y% 4 == 0:
-         leap = 1
-      if m==2:
-         return 28 + leap
-      list = [1,3,5,7,8,10,12]
-      if m in list:
-         return 31
-      return 30
+    #with connection.cursor() as cursor:
+    #    cursor.execute(
+    #        'select * from concat(cat.Categoria," ",pro.quantidade,pro.unidade) as produto ,sum(est.quantidade) as quantidade, pro.estoque_minimo from Mercado_estoque est, Mercado_categoria cat, Mercado_produtosolidario pro where cat.id = pro.id_categoria_id and est.id_id = pro.id group by est.id_produto_id ORDER BY produto;')
+    #    row = cursor.fetchall()
+    #    result = fromCursorToTableData(cursor, row)
+
+    atendimentos = Atendimento.objects.filter(data__gte=inicial,data__lte=final).values_list('id')
+    #print(atendimentos)
+    itensAtendimentos = ItensAtendimento.objects.filter(id_atendimento_id__in=atendimentos).values('produto').annotate(tot_itens=Sum('quantidade'))
+    #print(itensAtendimentos)
+    estoques = getEstoquePorProduto()
+    
+    context = {
+        'atendimentos' : atendimentos,
+        'itens_atendimentos' : itensAtendimentos,
+        'inicial': inicial,
+        'final': final,
+        'estoques' : estoques
+    }
+    return render(request,'relatorios/necessidade_periodo.html',{ 'context': context })
+

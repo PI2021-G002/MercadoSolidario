@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% load mathfilters %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <h2>Relatório de Necessidade para pŕoximo Período - Mercado Solidário CS</h2>
+    </div>
+  </div>
+</div>
+<div class="container mt-2 mb-4 border">
+    <form method="POST" class="row align-items-end justify-content-center py-2">
+      {% csrf_token %}
+      <h3>Escolha as Datas de início e final. (padrão, mês corrente)</h3>
+      <div id="inicio-picker" class="col">
+        <div>Data Inicial</div>
+        <input id="inicial" name="inicial" type="text" value='{{ context.inicial|date:"d/m/Y" }}'>
+      </div>
+      <div id="final-picker" class="col">
+        <div>Data Final</div>
+        <input id="final" name="final" type="text" value='{{ context.final|date:"d/m/Y"  }}'>
+      </div>
+      <div class="col mt-2">
+        <button class="btn btn-outline-info" type="submit">Gerar Relatório</button>
+      </div>
+    </form>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <table id="tbProdutos" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+        <thead> 
+                <tr>
+                    <th data-priority="1">Produto</th>
+                    <th data-priority="3" scope="col" style="text-align:center;">Qtd Consumida</th>
+                    <th data-priority="4" scope="col" style="text-align:center;">Qtd em Estoque</th>
+                    <th data-priority="2" scope="col" style="text-align:center;">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for produto in context.itens_atendimentos %}
+              <tr>
+                  <td>{{ produto.produto}}</td>
+                  <td style="text-align:center;">{{ produto.tot_itens }}</td>
+                  {% for estoque in context.estoques %}
+                    {% if produto.produto == estoque.produto %}
+                      <td style="text-align:center;">{{ estoque.quantidade }}</td>
+                      {% if estoque.quantidade >= produto.tot_itens %}
+                        <td style="background-color: green;">Estoque OK</td>
+                      {% else %}
+                        <td style="background-color: red;color:white;font-weight: bold;">Falta pelo menos {{ produto.tot_itens|sub:estoque.quantidade }} </td>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %} 
+              </tr>
+              {% endfor %}
+
+            </tbody>
+        </table>
+         <script lang="javascript">
+            $(document).ready( function () {
+                var table = $('#tbProdutos').DataTable( {
+                    language: {
+                    url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                    },
+                    responsive : true
+                } )
+                .columns.adjust()
+                .responsive.recalc();
+
+            } );
+            // https://bootstrap-datepicker.readthedocs.io/en/latest/
+            inicio_div = $('#inicio-picker input').datepicker({
+              autoclose: true,
+              format: 'dd/mm/yyyy',
+            }).on('changeDate', function(e) {
+               // `e` here contains the extra attributes
+               $('#final-picker input').datepicker('clearDates');
+               
+            });
+            final_div = $('#final-picker input').datepicker({
+              autoclose: true,
+              format: 'dd/mm/yyyy'
+            })    
+        </script>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock conteudo %}
