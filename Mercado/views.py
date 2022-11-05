@@ -198,7 +198,7 @@ def codigoMercado(request):
                 pesquisaItem = ItensAtendimentoRascunho.objects.filter(id_atendimento=atendimento,id_codigo=codbar.id_produto).first()
                 if pesquisaItem : # caso exista um item do tipo da lista não deixa colocar novamente
                     response = HttpResponseRedirect('rascunho')
-                    messages.error(request, "Já existem um item desse tipo na lista. Tente outro produto solidário.")
+                    messages.error(request, "Já existe um item desse tipo na lista. Tente outro produto solidário.")
                     return response
                 item = ItensAtendimentoRascunho.objects.create( id_atendimento=atendimento,
                                                                 id_codigo=codbar.id_produto,
