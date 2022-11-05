@@ -195,6 +195,11 @@ def codigoMercado(request):
                 codbar = CodBarProdSol.objects.filter(codigo_barras=request.POST.__getitem__('codigo_barras')).first()
                 produto = request.POST.__getitem__('produto')
                 solidarios = int(float((request.POST.__getitem__('solidarios'))))
+                pesquisaItem = ItensAtendimentoRascunho.objects.filter(id_atendimento=atendimento,id_codigo=codbar.id_produto).first()
+                if pesquisaItem : # caso exista um item do tipo da lista não deixa colocar novamente
+                    response = HttpResponseRedirect('rascunho')
+                    messages.error(request, "Já existem um item desse tipo na lista. Tente outro produto solidário.")
+                    return response
                 item = ItensAtendimentoRascunho.objects.create( id_atendimento=atendimento,
                                                                 id_codigo=codbar.id_produto,
                                                                 produto=produto,
@@ -264,7 +269,7 @@ def codigoMercado(request):
                     })
                 rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-                estoque = Estoque.objects.filter(id_produto_id=produto.id).order_by('validade')
+                estoque = Estoque.objects.filter(id_produto_id=produto.id).filter(~Q(quantidade=F('quantidade_saida'))).order_by('validade')
                 context = {
                     'rascunho':rascunho,
                     'itens':itens,
