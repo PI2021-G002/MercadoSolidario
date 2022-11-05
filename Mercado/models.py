@@ -1,5 +1,22 @@
 from email.policy import default
 from django.db import models
+from datetime import date, datetime,timedelta
+#from dateutil.relativedelta import relativedelta
+
+def numberOfDays( y, m):
+      leap = 0
+      if y% 400 == 0:
+         leap = 1
+      elif y % 100 == 0:
+         leap = 0
+      elif y% 4 == 0:
+         leap = 1
+      if m==2:
+         return 28 + leap
+      list = [1,3,5,7,8,10,12]
+      if m in list:
+         return 31
+      return 30
 
 class Categoria(models.Model):
     categoria = models.CharField(max_length=50)
@@ -71,6 +88,12 @@ class Estoque(models.Model):
     @property
     def em_estoque(self):
         return self.quantidade - self.quantidade_saida
+    def vence_trinta_dias(self):
+        return  self.validade < date.today()+timedelta(30)
+    def vence_em_noventa_dias(self):
+        return self.validade < date.today()+timedelta(90)
+
+        
 
 class AtendimentoRascunho(models.Model):
     tipo = models.CharField(max_length=50)

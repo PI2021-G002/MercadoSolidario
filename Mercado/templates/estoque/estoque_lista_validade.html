@@ -10,24 +10,34 @@
 	</div>
 	<div class="row">
     <div class="col">
-      <table id='tbProdutos' class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+      <table id="tbProdutos" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
         <thead> 
-                <tr>
-                  <th scope="col">Data de Validade</th>
-                  <th>Produto</th>
-                    <th scope="col">Quantidade</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for produto in estoque %}
-                <tr>
-                  <td data-sort="{{ test }}">{{ produto.validade}}</td>
-                  <td>{{ produto.id_produto }}</td>
-                  <td>{{ produto.em_estoque }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+          <tr>
+            <th data-priority="1" >Data de Validade</th>
+            <th data-priority="2" scope="col">Produto</th>
+            <th data-priority="3" scope="col">Quantidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for produto in estoque %}
+            {% if produto.vence_trinta_dias %}
+              <tr style="background-color: red;">
+            {% elif produto.vence_em_noventa_dias %}
+              <tr style="background-color: yellow;">
+            {% else %}
+              <tr>
+            {% endif %}
+              <td data-sort="{{ test }}">{{ produto.validade }}</td>
+              <td>{{ produto.id_produto }}</td>
+              <td>{{ produto.em_estoque }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>          
+          <tfoot>
+            <p><span style="background-color: red;color:white;font-weight: bold;">* &nbsp; </span>Vencimento em 30 dias ou menos</p>
+            <p><span style="background-color: yellow;color:white;font-weight: bold;">* &nbsp; </span>Vencimento em 90 dias ou menos</p>
+          </tfoot>
+      </table>
         <script lang="javascript">
           $(document).ready( function () {
               var table = $('#tbProdutos').DataTable( {
@@ -39,7 +49,7 @@
               .columns.adjust()
               .responsive.recalc();
           } );
-      </script>
+        </script>
     </div>
   </div>
 </div>
