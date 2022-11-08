@@ -32,6 +32,16 @@ DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = ['192.168.15.5','vitor-Inspiron-3442','localhost','mercadosolidario.sytes.net']
 
+# Restframework definition
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+	'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        #'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ]
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,7 +53,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Mercado',
     'MercadoSolidario',
-    'mathfilters'
+    'mathfilters',
+    'rest_framework',
+    'api'
 ]
 
 MIDDLEWARE = [

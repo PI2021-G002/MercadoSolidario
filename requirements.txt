@@ -7,6 +7,9 @@ certifi==2022.5.18.1
 cffi==1.15.0
 cryptography==37.0.2
 Django==4.0.4
+django-mathfilters==1.0.0
+django-rest-framework==0.1.0
+djangorestframework==3.14.0
 h11==0.13.0
 idna==3.3
 outcome==1.1.0
@@ -16,6 +19,7 @@ PyMySQL==1.0.2
 pyOpenSSL==22.0.0
 PySocks==1.7.1
 python-decouple==3.6
+pytz==2022.6
 selenium==4.2.0
 sniffio==1.2.0
 sortedcontainers==2.4.0

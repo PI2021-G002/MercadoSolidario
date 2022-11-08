@@ -26,6 +26,7 @@ admin.site.site_url = "/Mercado/"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('Mercado/',include('Mercado.urls')),
+    path('api/',include('api.urls')),  
     path('ajuda/',TemplateView.as_view(template_name='ajuda.html'), name='Ajuda'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('',TemplateView.as_view(template_name='index.html'), name='index'),

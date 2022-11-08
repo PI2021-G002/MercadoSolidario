@@ -26,6 +26,7 @@ admin.site.site_url = "/Mercado/"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('Mercado/',include('Mercado.urls')),
+
     path('ajuda/',TemplateView.as_view(template_name='ajuda.html'), name='Ajuda'),
 ]
 

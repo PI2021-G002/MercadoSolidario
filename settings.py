@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Mercado',
     'MercadoSolidario',
-    'mathfilters'
-
+    'mathfilters',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

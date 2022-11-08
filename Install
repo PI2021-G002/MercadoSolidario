@@ -7,13 +7,16 @@ sudo apt install libmysqlclient-dev
 sudo apt install python3-mysql
 sudo apt install python3-mysqldb
 sudo apt install python3-mysql.connector 
-sudo apt install python3-mysqldb-dbg 
+sudo apt install python3-mysqldb-dbg
+
 
 pip3 install django
 
 pip3 install mysqlclient
 
-pip3 install python-decouple
+pip3 install django-rest-framework
+
+pip3 install django-mathfilters
 
 ----
 To make mysql work with django/python3

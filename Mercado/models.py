@@ -84,7 +84,6 @@ class Estoque(models.Model):
         verbose_name = "Estoque"
         verbose_name_plural = "Estoque" 
         ordering = ['id_produto','validade','id_fonte']
-
     @property
     def em_estoque(self):
         return self.quantidade - self.quantidade_saida
@@ -93,7 +92,6 @@ class Estoque(models.Model):
     def vence_em_noventa_dias(self):
         return self.validade < date.today()+timedelta(90)
 
-        
 
 class AtendimentoRascunho(models.Model):
     tipo = models.CharField(max_length=50)
