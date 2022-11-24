@@ -1,5 +1,6 @@
 from email.policy import default
 from django.db import models
+from django.db.models.signals import post_save
 from datetime import date, datetime,timedelta
 #from dateutil.relativedelta import relativedelta
 
@@ -42,6 +43,13 @@ class ProdutoSolidario(models.Model):
     class Meta:
         verbose_name = "Produto Solidário"
         verbose_name_plural = "Produtos Solidários"
+
+def ProdutoSolidarioPostSave(sender, instance, created, *args,**kwargs):
+    if created:
+        instance.codigo_solidario=2022101022000+instance.id
+        instance.save()
+
+post_save.connect(ProdutoSolidarioPostSave, sender=ProdutoSolidario)
 
 class CodBarProdSol(models.Model):
     id_produto = models.ForeignKey(
