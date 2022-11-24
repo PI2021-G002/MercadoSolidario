@@ -50,6 +50,7 @@ def ProdutoSolidarioPostSave(sender, instance, created, *args,**kwargs):
         instance.save()
 
 post_save.connect(ProdutoSolidarioPostSave, sender=ProdutoSolidario)
+#https://www.youtube.com/watch?v=yD33eKfAOg8
 
 class CodBarProdSol(models.Model):
     id_produto = models.ForeignKey(
