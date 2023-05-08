@@ -2,7 +2,7 @@ asgiref==3.5.2
 async-generator==1.10
 attrs==21.4.0
 autopep8==1.6.0
-backports.zoneinfo==0.2.1
+backports.zoneinfo==0.2.1;python_version<"3.9"
 certifi==2022.5.18.1
 cffi==1.15.0
 cryptography==37.0.2
