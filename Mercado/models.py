@@ -2,6 +2,7 @@ from email.policy import default
 from django.db import models
 from django.db.models.signals import post_save
 from datetime import date, datetime,timedelta
+from django.utils.translation import gettext_lazy as _
 #from dateutil.relativedelta import relativedelta
 
 def numberOfDays( y, m):
@@ -20,24 +21,40 @@ def numberOfDays( y, m):
       return 30
 
 class Categoria(models.Model):
-    categoria = models.CharField(max_length=50)
+    categoria = models.CharField(max_length=50,verbose_name="Tipo de Produto")
     def __str__(self):
         return self.categoria
     class Meta:
         ordering = ['categoria']
+        verbose_name="Tipo de Produto"
+        verbose_name_plural="Tipos de Produto"
     
 class ProdutoSolidario(models.Model):
     id_categoria = models.ForeignKey(
        Categoria,
        on_delete = models.PROTECT,
-       verbose_name = "categoria"
+       verbose_name = "Tipo de Produto"
     )
-    quantidade = models.IntegerField()
-    unidade = models.CharField(max_length=20)
+    quantidade = models.IntegerField(verbose_name="Peso/Porção/Volume")
+    class Unidade(models.TextChoices):
+        gramas = 'g', _('g')
+        kg     = 'kg', _('Kg')
+        un     = 'un', _('unidade')
+        sache  = 'sache', _('sache')
+        pct    = 'pct', _('pacote')
+        pctp   = 'pctp', _('pacote peq')
+        pctg   = 'pctg', _('pacote grande')
+        ml     = 'ml', _('ml')
+        lata   = 'lata', _('lata')
+        l      = 'l', _('litro')
+        frasco = 'frasco', _('frasco')
+
+    unidade = models.CharField(max_length=20,choices=Unidade.choices)
     preco_solidario = models.FloatField()
     estoque_minimo = models.IntegerField(default=0)
     max_familia = models.IntegerField(default=0)
     codigo_solidario=models.CharField(max_length=13)
+    essencial=models.BooleanField(default=False)
     def __str__(self):
         return str(self.id_categoria) + " " + str(self.quantidade) + self.unidade 
     class Meta:
@@ -50,6 +67,7 @@ def ProdutoSolidarioPostSave(sender, instance, created, *args,**kwargs):
         instance.save()
 
 post_save.connect(ProdutoSolidarioPostSave, sender=ProdutoSolidario)
+#https://www.youtube.com/watch?v=yD33eKfAOg8
 
 class CodBarProdSol(models.Model):
     id_produto = models.ForeignKey(
@@ -61,7 +79,7 @@ class CodBarProdSol(models.Model):
     class Meta:
         verbose_name = "Código do Produto"
         verbose_name_plural = "Códigos dos Produtos"
-        ordering = ['id_produto','codigo_barras']
+        ordering = ['id_produto']
 
 class FonteDoacao(models.Model):
     nome = models.CharField(max_length=50)
