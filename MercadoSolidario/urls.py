@@ -30,5 +30,7 @@ urlpatterns = [
     path('ajuda/',TemplateView.as_view(template_name='ajuda.html'), name='Ajuda'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('',TemplateView.as_view(template_name='index.html'), name='index'),
+	
+	path('analise/', include('mercadoAnalytics.urls'))
 ]
 

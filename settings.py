@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'MercadoSolidario',
     'mathfilters',
     'rest_framework',
+	'mercadoAnalytics',
 ]
 
 MIDDLEWARE = [
