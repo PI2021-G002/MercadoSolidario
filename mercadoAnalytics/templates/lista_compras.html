@@ -56,20 +56,17 @@
 						</tr>
 					  </thead>
 					  <tbody>
-						{% for produto, predicao in produtos.items %}
+						{% for produto in produtos %}
 						<tr>
-							<td>{{ produto }}</td>
-							<td>int</td>
-							<td>{% for valores in predicao %}
-									{{ valores }}
-								{% endfor %}
-							</td>
+							<td>{{ produto.produto }}</td>
+							<td>{{ produto.qtde_estoque }}</td>
+							<td>{{ produto.previsao }}
 							<td>
-								<input type="text" class="form-control" placeholder="Quantidade" aria-label="Quantidade" aria-describedby="basic-addon1"></input>
+								{{ produto.qtde_compra }}
 							</td>
 							<td>
 								<div class="form-check">
-									<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></input>
+									<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked></input>
 								</div>
 							</td>
 						</tr>

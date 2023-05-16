@@ -4,6 +4,9 @@ from django.shortcuts import render
 import matplotlib.pyplot as plt
 import io
 import urllib, base64
+import math
+from datetime import datetime
+import pymysql
 
 from decouple import config
 
@@ -64,8 +67,27 @@ def config(request):
 	categorias_dataset = pd.read_csv(PATH_CATEGORIA)
 	categorias_produtos = categorias_dataset.iloc[:,1].unique()
 	
-	df = pd.read_excel(PATH_VENDAS)
+	#TODO realocar e criar uma função de conexão ao BD
+	#Recupera os produtos doados em cada dia de atendimento
+	host='localhost'
+	user=''
+	password = ''
+	db=''
+	connection = pymysql.connect(host=host,
+                             user=user,
+                             password=password,
+                             db=db)
+
+	df = pd.read_sql('SELECT * FROM VW_ANALISE_PREVISAO',
+                 connection,
+                 )
+				 
+	df.columns = ['Produto', 'id_produto', 'Última Venda', 'Quantidade']
+	
+	#df = pd.read_excel(PATH_VENDAS)
 	datas_atendimento = df['Última Venda'].unique().tolist()
+	#print(datas_atendimento)
+	
 	produtos_mercado_solidario = df['Produto'].unique().tolist()
 	
 	x, y, labelencoder, vectorizer = pre_processamento()
@@ -177,7 +199,7 @@ def home_total_produtos_doados(request):
 		for j,k in i[1].items():
 			qtde_produto_por_data[indx] = j, k
 			indx = indx + 1
-
+	
 	data_total_doado_mes = pd.DataFrame.from_dict(qtde_produto_por_data, orient='index', columns = ['Data','Produtos Doados'])
 	
 	data_total_doado_mes.plot.bar(
@@ -215,7 +237,7 @@ def home_categorias_produtos_doados(request):
 			sizes.append(value)
 
 	fig, ax = plt.subplots()
-	ax.pie(sizes, labels=labels, startangle = 90)
+	ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle = 90)
 	plt.title("Categorias dos produtos doados.")
 	plt.get_current_fig_manager().set_window_title('Categorias Produtos Doados')
     #plt.legend(title = "Categorias")
@@ -293,8 +315,10 @@ def previsao_produto(data):
 	
 	v_preditos = lin.predict(X)
 	
-	pred_min = "{:.2f}".format(min(v_preditos))
-	pred_max = "{:.2f}".format(max(v_preditos))
+	#pred_min = "{:.2f}".format(math.ceil(min(v_preditos)))
+	pred_min = "{:.0f}".format(math.ceil(min(v_preditos)))
+	#pred_max = "{:.2f}".format(2 * math.ceil(max(v_preditos)))
+	pred_max = "{:.0f}".format(2 * math.ceil(max(v_preditos)))
 	
 	plt.scatter(X, y, color = 'blue')
 	  
@@ -349,17 +373,25 @@ def previsao_produtos_lista(produtos):
 		
 		v_preditos = lin.predict(X)
 		
-		pred_min = "{:.2f}".format(min(v_preditos))
-		pred_max = "{:.2f}".format(max(v_preditos))
+		#pred_min = "{:.2f}".format(math.ceil(min(v_preditos)))
+		pred_min = "{:.0f}".format(math.ceil(min(v_preditos)))
+		#pred_max = "{:.2f}".format(2 * math.ceil(max(v_preditos)))
+		pred_max = "{:.0f}".format(2 * math.ceil(max(v_preditos)))
 		
 		#TODO retirar a formatação '-' daqui
-		produtos_mercado_previsao[produto] = pred_min+ " - ", pred_max
+		#produtos_mercado_previsao[produto] = pred_min+ " - ", pred_max
+		produtos_mercado_previsao[produto] = (pred_max)
 	return produtos_mercado_previsao
 	
 
 def atendimento_anterior(request):
 	#periodos = datas_atendimento
-	datas = datas_atendimento
+	#datas = datas_atendimento
+	datas = []
+	
+	for data_atendimento in datas_atendimento:
+		dia = data_atendimento.strftime('%d-%m-%Y')
+		datas.append(dia)
 		
 	return render(request,'atendimentos_anteriores.html', {'datas':datas})	
 	
@@ -367,9 +399,15 @@ def atendimento_anterior_data(request, data):
 	global df
 	
 	df_local = df
-	datas = datas_atendimento
+	#datas = datas_atendimento
+	datas = []
 	
-	#exibe data do atendimento
+	for data_atendimento in datas_atendimento:
+		dia = data_atendimento.strftime('%d-%m-%Y')
+		datas.append(dia)
+	
+	#O banco so aceita datetime por isso deve converter a string para date antes
+	data = datetime.strptime(data, '%d-%m-%Y').date()
 	data_atendimento = data
 	
 	produtos_doados_atendimento = {}
@@ -394,15 +432,33 @@ def atendimento_anterior_data(request, data):
 
 	return render(request,'atendimentos_anteriores.html', {'produtos_atendimento':produtos_doados_atendimento, 'data_atendimento':data_atendimento, 'datas':datas})
 
-#TODO carregar dados DB e criar formulario para salvar a lista em algum formato
+#TODO carregar dados DB
 def proximo_atendimento(request):
-	#'produto':[qtde_estoque_atual, {'v_pred':[min, max]}]
 	global produtos_mercado_solidario
+	'''
+	O estoque foi considerado a previsão acrescido de 100 quando conseguir
+	recuperar do BD só acrescentar o valor correto
+	'''
+	dados_produto = {}
+	#produto, qtde_estoque, previsao, qtde_compra
+	produtos = produtos_mercado_solidario
+		
+	#Retorna o valor previsto de consumo já multiplicado por 2
+	produtos_previsao = previsao_produtos_lista(produtos)
 	
-	produtos = produtos_mercado_solidario	
-	p = previsao_produtos_lista(produtos)
-	#print(p)
-	return render(request,'lista_compras.html', {'produtos':p})
-	
+	prod = []
+	for i, previsao in produtos_previsao.items():
+		dados_produto['produto'] = i
+		
+		estoque = int(previsao) + 100
+		dados_produto['qtde_estoque'] = estoque
+		dados_produto['previsao'] = previsao
+		dados_produto['qtde_compra'] = estoque - int(previsao)
+		prod.append(dados_produto)
+		dados_produto = {}
+		
+	return render(request,'lista_compras.html', {'produtos':prod})
+
+#e criar formulario para salvar a lista em algum formato	
 def lista_proximo_atendimento():
 	pass
