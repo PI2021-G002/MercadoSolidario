@@ -6,6 +6,7 @@ import io
 import urllib, base64
 import math
 from datetime import datetime
+from datetime import date
 import pymysql
 
 from decouple import config
@@ -69,10 +70,10 @@ def config(request):
 	
 	#TODO realocar e criar uma função de conexão ao BD
 	#Recupera os produtos doados em cada dia de atendimento
-	host='localhost'
+	host=''
 	user=''
 	password = ''
-	db=''
+	db= ''
 	connection = pymysql.connect(host=host,
                              user=user,
                              password=password,
@@ -200,7 +201,31 @@ def home_total_produtos_doados(request):
 			qtde_produto_por_data[indx] = j, k
 			indx = indx + 1
 	
-	data_total_doado_mes = pd.DataFrame.from_dict(qtde_produto_por_data, orient='index', columns = ['Data','Produtos Doados'])
+	
+	#soma a quantidade doada por mês e exibe o resultado
+	datas_unicas = {}
+	ind = 0
+	datas_agrupadas = []
+
+	for k, v in qtde_produto_por_data.items():
+		data = v[0].strftime("%m-%Y") #retira a data para realizar a soma
+		if data not in datas_unicas.keys():
+			datas_unicas[data] = v[1]
+		else:
+			valor_anterior = datas_unicas[data]
+			datas_unicas[data] = v[1] + valor_anterior
+	
+	datas_apresentacao = {}
+	for k, v in datas_unicas.items():
+		data = k.split('-')
+		datas_apresentacao[ind] = date(int(data[1]), int(data[0]), 1), v
+		ind = ind + 1
+
+	
+	
+	
+	#data_total_doado_mes = pd.DataFrame.from_dict(qtde_produto_por_data, orient='index', columns = ['Data','Produtos Doados'])
+	data_total_doado_mes = pd.DataFrame.from_dict(datas_apresentacao, orient='index', columns = ['Data','Produtos Doados'])
 	
 	data_total_doado_mes.plot.bar(
 		title="Total de produtos doados por mês de atendimento do Mercado", x='Data', y='Produtos Doados', rot=0)
