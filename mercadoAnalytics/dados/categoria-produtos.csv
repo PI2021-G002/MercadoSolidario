@@ -1,75 +1,75 @@
-"ACHOCOLATADO 300g",Matinais
-"BOLACHA DOCE UN",Matinais
-"BOLACHA SALGADA UN",Matinais
-"LEITE 1LT",Matinais
-"FARINHA DE TRIGO",Farinhas
+"ACHOCOLATADO 300g","Alimentos-Matinais"
+"BOLACHA DOCE UN","Alimentos-Matinais"
+"BOLACHA SALGADA UN","Alimentos-Matinais"
+"LEITE 1LT","Alimentos-Matinais"
+"FARINHA DE TRIGO",Alimento
 "SABÃO EM PÓ 1kg/800g",Higiene
-"LEITE EM PÓ 250/200g",Matinais
-"AÇÚCAR 1kg",Básico
-"ARROZ 5kg",Básico
-"FEIJÃO",Básico
-"MOLHO DE TOMATE 340g",Geral
-"MACARRÃO 500g",Básico
-"MIOJO",Geral
-"CAFÉ 500g",Básico
-"ÓLEO",Básico
-"MILHO (enlatado)",Geral
-"ERVILHA (enlatado)",Geral
-"SARDINHA (enlatado)",Geral
-"SAL",Básico
-"FARINHA DE MILHO 500g",Farinhas
-"FUBÁ 500g",Farinhas
-"FARINHA DE MANDIOCA 500g",Farinhas
+"LEITE EM PÓ 250/200g","Alimentos-Matinais"
+"AÇÚCAR 1kg","Alimentos-Básicos"
+"ARROZ 5kg","Alimentos-Básicos"
+"FEIJÃO","Alimentos-Básicos"
+"MOLHO DE TOMATE 340g",Alimento
+"MACARRÃO 500g","Alimentos-Básicos"
+"MIOJO",Alimento
+"CAFÉ 500g","Alimentos-Básicos"
+"ÓLEO","Alimentos-Básicos"
+"MILHO (enlatado)",Alimento
+"ERVILHA (enlatado)",Alimento
+"SARDINHA (enlatado)",Alimento
+"SAL","Alimentos-Básicos"
+"FARINHA DE MILHO 500g",Alimento
+"FUBÁ 500g",Alimento
+"FARINHA DE MANDIOCA 500g",Alimento
 "DETERGENTE",Higiene
 "ESCOVA DE DENTE",Higiene
 "SABONETE",Higiene
 "AGUA SANITÁRIA 1LT",Higiene
-"TEMPERO",Geral
+"TEMPERO",Alimento
 "CREME DENTAL",Higiene
-"ARROZ 1kg",Básico
-"LEITE EM PÓ 400g",Matinais
-"LEITE EM PÓ 1kg",Matinais
-"MACARRÃO 1kg",Básico
-"MASSA P/ LASANHA",Geral
-"PIMENTA",Geral
-"GOIABADA",Geral
-"GELATINA",Geral
+"ARROZ 1kg","Alimentos-Básicos"
+"LEITE EM PÓ 400g","Alimentos-Matinais"
+"LEITE EM PÓ 1kg","Alimentos-Matinais"
+"MACARRÃO 1kg","Alimentos-Básicos"
+"MASSA P/ LASANHA",Alimento
+"PIMENTA",Alimento
+"GOIABADA",Alimento
+"GELATINA",Alimento
 "ABSORVENTE GRANDE",Higiene
 "ABSORVENTE PEQUENO",Higiene
-"MASSA P/ BOLO 400g",Geral
-"BOLACHA PCT DOCE 400/300g",Matinais
-"MAIONESE",Geral
-"VINAGRE",Geral
-"SOPA",Geral
-"SUCO (saquinho)",Geral
-"FAROFA 250g",Farinhas
+"MASSA P/ BOLO 400g",Alimento
+"BOLACHA PCT DOCE 400/300g","Alimentos-Matinais"
+"MAIONESE",Alimento
+"VINAGRE",Alimento
+"SOPA",Alimento
+"SUCO (saquinho)",Alimento
+"FAROFA 250g",Alimento
 "BIS",Diversos
 "DOCE DE LEITE",Diversos
-"AZEITONA",Geral
-"SELETA DE LEGUMES",Geral
+"AZEITONA",Alimento
+"SELETA DE LEGUMES",Alimento
 "PAPEL HIGIÊNICO C4",Higiene
 "DESODORANTE",Higiene
 "CHOCOTONE",Diversos
 "PANETONE",Diversos
 "POLENGUINHO",Diversos
 "DADINHO",Diversos
-"TORRADA",Matinais
-"BOLO PRONTO",Matinais
+"TORRADA","Alimentos-Matinais"
+"BOLO PRONTO","Alimentos-Matinais"
 "SUCO LITRO",Diversos
 "PÃO DE MEL",Diversos
-"UVA PASSAS / NOSES",Básico
-"SHAMPOO/CONDICIONADOR",Básico
-"CAFÉ 250g",Básico
-"FUBÁ 1 Kg",Básico
-"ATUM (lata)",Básico
-"MILHO DE PIPOCA 500g",Básico
-"DESINFETANTE 500/750/1LT",Básico
-"BOLACHA PCT SALG 400/300g",Matinais
-"MACARRÃO 200g",Básico
+"UVA PASSAS / NOSES",Alimento
+"SHAMPOO/CONDICIONADOR",Higiene
+"CAFÉ 250g","Alimentos-Básicos"
+"FUBÁ 1 Kg","Alimentos-Básicos"
+"ATUM (lata)","Alimentos-Básicos"
+"MILHO DE PIPOCA 500g","Alimentos-Básicos"
+"DESINFETANTE 500/750/1LT",Limpeza
+"BOLACHA PCT SALG 400/300g","Alimentos-Matinais"
+"MACARRÃO 200g","Alimentos-Básicos"
 "LYSOFORME",Higiene
-"SABÃO EM BARRA UND",Higiene
-"AMACIANTE 500ml",Higiene
+"SABÃO EM BARRA UND",Limpeza
+"AMACIANTE 500ml",Limpeza
 "PAPEL HIG 12/16",Higiene
-"LIMPADOR MULT USO 500ml",Higiene
-"ESPONJA DE LOUÇA 1UND",Higiene
-"ACHOCOLATADO LIQ 200ml",Matinais
+"LIMPADOR MULT USO 500ml",Limpeza
+"ESPONJA DE LOUÇA 1UND",Limpeza
+"ACHOCOLATADO LIQ 200ml","Alimentos-Matinais"

@@ -18,6 +18,7 @@ urlpatterns = [
 	path("atendimento_anterior/<str:data>", views.atendimento_anterior_data),
 	path("atendimento_anterior/", views.atendimento_anterior),
 	
+	path("proximo_atendimento/gerarListaCompras/", views.lista_compra_produtos),
 	
 	path("proximo_atendimento/", views.proximo_atendimento),
 ]
