@@ -12,57 +12,77 @@
 {% load mathfilters %}
 
 {% block conteudo %}
-    
+<style>
+      
+       .vertical-scrollable> .row {
+          position: absolute;
+          top: 120px;
+          bottom: 100px;
+          
+          overflow-y: scroll; 
+        }
+        .col-sm-8 { 
+            color: white; 
+            font-size: 24px; 
+            padding-bottom: 20px; 
+            padding-top: 18px; 
+        } 
+</style>		
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
-<!-- https://sukhbinder.wordpress.com/2022/04/13/rendering-matplotlib-graphs-in-django/-->
 <div class="container text-center">
-<h1>Mercado Solidário Analytics.</h1>
+	<div class="row">
+		<div class="col-sm-12">
+			<h1>Mercado Solidário Analytics.</h1>
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-sm-2">
-		  <!--Level 1: .col-sm-3-->
 			<div class="list-group">
-			  <!--a href="produtos_atendimento/" class="list-group-item list-group-item-action active" aria-current="true">
-				Acompanhamento Produtos
-			  </a>
-			  <!--a href="#" class="list-group-item list-group-item-action">Previsão Próximo Atendimento</a>
-			  <!--a href="#" class="list-group-item list-group-item-action">Previsão Próximo Atendimento</a-->
 			  {% for data in datas %}
 			  <a href="{{ data }}" class="list-group-item list-group-item-action"> {{ data }}</a>
 			  {% endfor %}
-			  <!--a class="list-group-item list-group-item-action disabled">Lista de Compras</a-->
 			</div>	
 		</div>
-	
-		<div class="col-sm-9">
-		  <div class="row">
-			<div class="col-2 col-sm-2">
+		
+		<div class="col-sm-10">
+			<div class="container vertical-scrollable">
+				<div class="row">
+					<h3>Atendimento realizado dia {{ data_atendimento }}</h3>
+					<table class="table">
+					  <thead>
+						<tr>
+						  <th scope="col">Produto</th>
+						  <th scope="col">Total Doado</th>
+						</tr>
+					  </thead>
+					  <tbody>
+						{% for produto, quantidade in produtos_atendimento.items %}
+						<tr>
+						  <td>{{ produto }}</td>
+						  <td>{{ quantidade }}</td>
+						</tr>
+						{% endfor %}
+					  </tbody>
+					</table>
+				</div>
 			</div>
-			<div class="col-6 col-sm-6">
-				<h3>Atendimento realizado dia {{ data_atendimento }}</h3>
-				<table class="table">
-				  <thead>
-					<tr>
-					  <th scope="col">Produto</th>
-					  <th scope="col">Total Doado</th>
-					</tr>
-				  </thead>
-				  <tbody>
-					{% for produto, quantidade in produtos_atendimento.items %}
-					<tr>
-					  <td>{{ produto }}</td>
-					  <td>{{ quantidade }}</td>
-					</tr>
-					{% endfor %}
-				  </tbody>
-				</table>
-				
-				<a href="../" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Voltar</a>
-			</div>
-		  </div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col"> &nbsp
+		</div>
+	</div>
+	<div class="row">
+		<div class="col"> &nbsp
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-5">
+		</div>
+		<div class="col-sm-2">	
+			<a href="../" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Voltar</a>
 		</div>
 	</div>
 </div>
-<!--/body>
-</html-->
 {% endblock conteudo %}

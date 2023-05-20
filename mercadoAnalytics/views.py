@@ -1,9 +1,18 @@
 from django.shortcuts import render
 
+from django.db import connection
 from django.shortcuts import render
+from .forms import FormListaCompras
+from django.http import HttpResponseRedirect
+from django.contrib import messages
 import matplotlib.pyplot as plt
 import io
 import urllib, base64
+import math
+from datetime import datetime
+from datetime import date
+import pymysql
+
 
 from decouple import config
 
@@ -39,8 +48,20 @@ datas_atendimento = []
 
 #Se colocar dentro de config retorna um erro de recursão
 PATH_CATEGORIA = config('PATH_CATEGORIA')
-PATH_VENDAS = config('PATH_VENDAS')
+#PATH_VENDAS = config('PATH_VENDAS')
 
+def fromCursorToTableData(cursor, rows):
+	x = cursor.description
+	resultsList = []
+	for r in rows:
+		i = 0
+		d = {}
+		while i < len(x):
+			d[x[i][0]] = r[i]
+			i = i+1
+		resultsList.append(d)
+	return resultsList
+	
 #Método de configuração do APP - carregamento arquivos e treinamento IA
 def config(request):
 	global uri_cat
@@ -59,13 +80,30 @@ def config(request):
 	global model
 	
 	global PATH_CATEGORIA
-	global PATH_VENDAS
+	#global PATH_VENDAS
 	
 	categorias_dataset = pd.read_csv(PATH_CATEGORIA)
 	categorias_produtos = categorias_dataset.iloc[:,1].unique()
+	print(">> CATEGORIAS", categorias_produtos)
+	#TODO realocar e criar uma função de conexão ao BD
+	#Recupera os produtos doados em cada dia de atendimento
+	result = ''
+	with connection.cursor() as cursor:
+		cursor.execute('SELECT * FROM VW_ANALISE_PREVISAO')
+		row = cursor.fetchall()
+		result = fromCursorToTableData(cursor, row)
+    
+	#TODO verificar se esta buscando no banco duas vezes
+	df = pd.read_sql('SELECT * FROM VW_ANALISE_PREVISAO',
+                 connection,
+                 )
+				 
+	df.columns = ['Produto', 'id_produto', 'Última Venda', 'Quantidade']
 	
-	df = pd.read_excel(PATH_VENDAS)
+	#df = pd.read_excel(PATH_VENDAS)
 	datas_atendimento = df['Última Venda'].unique().tolist()
+	#print(datas_atendimento)
+	
 	produtos_mercado_solidario = df['Produto'].unique().tolist()
 	
 	x, y, labelencoder, vectorizer = pre_processamento()
@@ -177,8 +215,30 @@ def home_total_produtos_doados(request):
 		for j,k in i[1].items():
 			qtde_produto_por_data[indx] = j, k
 			indx = indx + 1
+	
+	
+	#soma a quantidade doada por mês e exibe o resultado
+	datas_unicas = {}
+	ind = 0
+	datas_agrupadas = []
 
-	data_total_doado_mes = pd.DataFrame.from_dict(qtde_produto_por_data, orient='index', columns = ['Data','Produtos Doados'])
+	for k, v in qtde_produto_por_data.items():
+		data = v[0].strftime("%m-%Y") #retira a data para realizar a soma
+		if data not in datas_unicas.keys():
+			datas_unicas[data] = v[1]
+		else:
+			valor_anterior = datas_unicas[data]
+			datas_unicas[data] = v[1] + valor_anterior
+	
+	datas_apresentacao = {}
+	for k, v in datas_unicas.items():
+		data = k.split('-')
+		datas_apresentacao[ind] = date(int(data[1]), int(data[0]), 1), v
+		ind = ind + 1
+
+
+	#data_total_doado_mes = pd.DataFrame.from_dict(qtde_produto_por_data, orient='index', columns = ['Data','Produtos Doados'])
+	data_total_doado_mes = pd.DataFrame.from_dict(datas_apresentacao, orient='index', columns = ['Data','Produtos Doados'])
 	
 	data_total_doado_mes.plot.bar(
 		title="Total de produtos doados por mês de atendimento do Mercado", x='Data', y='Produtos Doados', rot=0)
@@ -215,7 +275,7 @@ def home_categorias_produtos_doados(request):
 			sizes.append(value)
 
 	fig, ax = plt.subplots()
-	ax.pie(sizes, labels=labels, startangle = 90)
+	ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle = 90)
 	plt.title("Categorias dos produtos doados.")
 	plt.get_current_fig_manager().set_window_title('Categorias Produtos Doados')
     #plt.legend(title = "Categorias")
@@ -293,8 +353,8 @@ def previsao_produto(data):
 	
 	v_preditos = lin.predict(X)
 	
-	pred_min = "{:.2f}".format(min(v_preditos))
-	pred_max = "{:.2f}".format(max(v_preditos))
+	pred_min = "{:.0f}".format(math.ceil(min(v_preditos)))
+	pred_max = "{:.0f}".format(2 * math.ceil(max(v_preditos)))
 	
 	plt.scatter(X, y, color = 'blue')
 	  
@@ -349,17 +409,23 @@ def previsao_produtos_lista(produtos):
 		
 		v_preditos = lin.predict(X)
 		
-		pred_min = "{:.2f}".format(min(v_preditos))
-		pred_max = "{:.2f}".format(max(v_preditos))
+		pred_min = "{:.0f}".format(math.ceil(min(v_preditos)))
+		pred_max = "{:.0f}".format(2 * math.ceil(max(v_preditos)))
 		
 		#TODO retirar a formatação '-' daqui
-		produtos_mercado_previsao[produto] = pred_min+ " - ", pred_max
+		#produtos_mercado_previsao[produto] = pred_min+ " - ", pred_max
+		produtos_mercado_previsao[produto] = (pred_max)
 	return produtos_mercado_previsao
 	
 
 def atendimento_anterior(request):
 	#periodos = datas_atendimento
-	datas = datas_atendimento
+	#datas = datas_atendimento
+	datas = []
+	
+	for data_atendimento in datas_atendimento:
+		dia = data_atendimento.strftime('%d-%m-%Y')
+		datas.append(dia)
 		
 	return render(request,'atendimentos_anteriores.html', {'datas':datas})	
 	
@@ -367,9 +433,15 @@ def atendimento_anterior_data(request, data):
 	global df
 	
 	df_local = df
-	datas = datas_atendimento
+	#datas = datas_atendimento
+	datas = []
 	
-	#exibe data do atendimento
+	for data_atendimento in datas_atendimento:
+		dia = data_atendimento.strftime('%d-%m-%Y')
+		datas.append(dia)
+	
+	#O banco so aceita datetime por isso deve converter a string para date antes
+	data = datetime.strptime(data, '%d-%m-%Y').date()
 	data_atendimento = data
 	
 	produtos_doados_atendimento = {}
@@ -394,15 +466,95 @@ def atendimento_anterior_data(request, data):
 
 	return render(request,'atendimentos_anteriores.html', {'produtos_atendimento':produtos_doados_atendimento, 'data_atendimento':data_atendimento, 'datas':datas})
 
-#TODO carregar dados DB e criar formulario para salvar a lista em algum formato
+#Verifica a quantidade do produto em estoque
+def verifica_estoque_produto(nome_produto):
+	result = ''
+	with connection.cursor() as cursor:
+		cursor.execute('SELECT * FROM vw_estoque_produto_solidario')
+		row = cursor.fetchall()
+		result = fromCursorToTableData(cursor, row)
+    
+	#Caso não tenha produto no estoque retorna 0
+	qtde_estoque = 0
+	
+	for produto in result:
+		for k, v in produto.items():
+			if v == nome_produto:
+				qtde_estoque = produto['em_estoque']
+				
+	return qtde_estoque
+	
+#recupera os produtos necessarios para o proximo atendimento
 def proximo_atendimento(request):
-	#'produto':[qtde_estoque_atual, {'v_pred':[min, max]}]
-	global produtos_mercado_solidario
+	global produtos_mercado_solidario	
+			
+	dados_produto = {}
+	#produto, qtde_estoque, previsao, qtde_compra
+	produtos = produtos_mercado_solidario
+		
+	#Retorna o valor previsto de consumo já multiplicado por 2
+	produtos_previsao = previsao_produtos_lista(produtos)
 	
-	produtos = produtos_mercado_solidario	
-	p = previsao_produtos_lista(produtos)
-	#print(p)
-	return render(request,'lista_compras.html', {'produtos':p})
-	
-def lista_proximo_atendimento():
-	pass
+	prod = []
+	for i, previsao in produtos_previsao.items():
+		
+		dados_produto['produto'] = i
+		
+		estoque = verifica_estoque_produto(i) #retorna o valor do banco
+		dados_produto['qtde_estoque'] = estoque
+		dados_produto['previsao'] = previsao
+		dados_produto['qtde_compra'] = abs(estoque - int(previsao))
+		prod.append(dados_produto)
+		dados_produto = {}
+		
+	return render(request,'lista_compras.html', {'produtos':prod})
+
+#Cria a lista de compras
+def salva_lista_compra_pdf(dados, user_logado):
+	import matplotlib.pyplot as plt
+	from matplotlib.backends.backend_pdf import PdfPages
+
+	df = pd.DataFrame.from_dict(
+		dados, orient='index', columns =[
+        'Produto Solidário', 'Quantidade necessária para comprar.'])
+
+	fig, ax =plt.subplots(figsize=(12,4))
+	plt.title("Lista de compras Mercado Solidário.")
+	ax.axis('tight')
+	ax.axis('off')
+	the_table = ax.table(cellText=df.values,colLabels=df.columns,loc='center')
+
+	pp = PdfPages("lista-compras-mercado-solidario.pdf")
+	pp.savefig(fig, bbox_inches='tight')
+	pp.close()
+
+#Recupera os dados do formulario de entrada e solicita criação da lista de compras	
+def lista_compra_produtos(request):
+	if request.method == 'POST':
+		
+		#https://docs.djangoproject.com/en/4.2/ref/request-response/
+		user_logado = request.user.username
+		produtos = request.POST.getlist('produto')
+		produtos_estoque = request.POST.getlist('estoque_atual')
+		produtos_previsao = request.POST.getlist('previsao')
+		produtos_qtde_comprar = request.POST.getlist('qtde_comprar')
+		
+		produtos_comprar = request.POST.getlist('comprar')
+		
+		#Como todas as listas descritas acima tem o mesmo numero de elementos pode iterar o com tamanho
+		lista_compras = {}
+		
+		if len(produtos_comprar) != 0:
+			for i in range(len(produtos)):
+				if produtos[i] in produtos_comprar:
+					lista_compras[i] = produtos[i], produtos_qtde_comprar[i]
+		
+		
+			#Adicionar um retorno da função e validar
+			salva_lista_compra_pdf(lista_compras, user_logado)
+		
+			messages.success(request,"Lista de compras gerada com sucesso.",extra_tags="SUCESSOPDF")
+		else:
+			messages.error(request,"Nenhum produto selecionado para compra.")
+		
+		return HttpResponseRedirect('../') #esse retorno mantem na mesma página
