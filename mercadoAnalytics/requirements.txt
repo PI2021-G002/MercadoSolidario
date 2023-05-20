@@ -1,10 +1,14 @@
 absl-py==1.4.0
 asgiref==3.5.2
 astunparse==1.6.3
+<<<<<<< Updated upstream
 async-generator==1.10
 attrs==21.4.0
 autopep8==1.6.0
 backports.zoneinfo==0.2.1
+=======
+backports.zoneinfo==0.2.1;python_version<"3.9"
+>>>>>>> Stashed changes
 cachetools==5.3.0
 certifi==2022.5.18.1
 cffi==1.15.0
@@ -22,7 +26,7 @@ fonttools==4.39.3
 freetype-py==2.3.0
 gast==0.4.0
 google-auth==2.17.3
-google-auth-oauthlib==1.0.0
+google-auth-oauthlib
 google-pasta==0.2.0
 grpcio==1.54.0
 h11==0.13.0
@@ -68,15 +72,20 @@ scikit-learn==1.2.2
 scipy==1.10.1
 selenium==4.2.0
 six==1.16.0
+<<<<<<< Updated upstream
 sniffio==1.2.0
 sortedcontainers==2.4.0
 sqlparse==0.4.2
 tensorboard==2.12.2
+=======
+sqlparse==0.4.4
+tensorboard==2.12.0
+>>>>>>> Stashed changes
 tensorboard-data-server==0.7.0
 tensorboard-plugin-wit==1.8.1
 tensorflow==2.12.0
 tensorflow-estimator==2.12.0
-tensorflow-intel==2.12.0
+tensorflow-intel==2.12.0;python_version<"3.9"
 tensorflow-io-gcs-filesystem==0.31.0
 termcolor==2.3.0
 threadpoolctl==3.1.0

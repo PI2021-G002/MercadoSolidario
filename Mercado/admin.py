@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoacao,AtendimentoTemplate,ItensAtendimentoTemplate,Estoque
+from .models import Categoria, ProdutoSolidario, CodBarProdSol, FonteDoacao,AtendimentoTemplate,ItensAtendimentoTemplate,Estoque,PessoasAtendimento
 
 class CategoriaAdmin(admin.ModelAdmin):
     fields = ['categoria']
@@ -78,3 +78,9 @@ class EstoqueAdmin(admin.ModelAdmin):
         return readonly_fields
 
 admin.site.register(Estoque,EstoqueAdmin)
+
+class PessoasAtendimentoAdmin(admin.ModelAdmin):
+    fields=('nome','qtd_pessoas','num_solidarios','ano','local','ativo')
+    list_display=('nome','qtd_pessoas','num_solidarios','ano','local','ativo')
+
+admin.site.register(PessoasAtendimento,PessoasAtendimentoAdmin)

@@ -18,8 +18,18 @@
              <a class="btn btn-danger mt-5" href="cancelar">Cancelar atendimento (todos os dados do atendimento serão apagados)</a>
             </div>
         {% else %}
-          <div class="text-center">Digite a quantidade de solidários e pressione "Continuar" para iniciar o atendimento</div>
           <div>
+            <div>Selecione um nome da lista:</div>
+            <select id="selectid" name="selectid" class="form-control form-control-lg" oninput="copyValue()"> 
+              <option> ------ Selecione ------- </option>
+              {% for pessoa in assistidos %}
+                <option value="{{ pessoa.num_solidarios }}">{{pessoa.nome}}</option> 
+              {% endfor %}
+            </select>
+          </div>
+          <div class="text-center">Ou Digite a quantidade de solidários e pressione "Continuar" para iniciar o atendimento</div>
+          <div>
+
             <form name="formSolidarios" id="formSol" method="POST" action="rascunho">
               <div class="form-group">
                 <label for="solidario">Quantidade de Solidários</label>
@@ -29,6 +39,13 @@
               <button type="submit" class="btn btn-primary text-center">Continuar</button>
             </form>
           </div>
+          <script>
+            function copyValue(){
+              var selecao = document.getElementById("selectid");
+              var valor = selecao.options[selecao.selectedIndex].value;
+              $('#solidario').val(valor);
+            }
+          </script>
         {% endif %}
       </div>
     </div>

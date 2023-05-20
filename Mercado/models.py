@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from datetime import date, datetime,timedelta
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MinValueValidator,MaxValueValidator
 #from dateutil.relativedelta import relativedelta
 
 def numberOfDays( y, m):
@@ -21,7 +22,7 @@ def numberOfDays( y, m):
       return 30
 
 class Categoria(models.Model):
-    categoria = models.CharField(max_length=50,verbose_name="Tipo de Produto")
+    categoria = models.CharField(max_length=50,verbose_name="Tipo de Produto", unique=True)
     def __str__(self):
         return self.categoria
     class Meta:
@@ -48,6 +49,7 @@ class ProdutoSolidario(models.Model):
         lata   = 'lata', _('lata')
         l      = 'l', _('litro')
         frasco = 'frasco', _('frasco')
+        pote   = 'pote', _('pote')
 
     unidade = models.CharField(max_length=20,choices=Unidade.choices)
     preco_solidario = models.FloatField()
@@ -82,7 +84,7 @@ class CodBarProdSol(models.Model):
         ordering = ['id_produto']
 
 class FonteDoacao(models.Model):
-    nome = models.CharField(max_length=50)
+    nome = models.CharField(max_length=50, unique=True)
     descricao = models.CharField(max_length=255,verbose_name="descrição")
     def __str__(self):
         return self.nome 
@@ -190,3 +192,14 @@ class ItensAtendimentoTemplate(models.Model):
         verbose_name_plural = "Modelo de Itens"
         ordering = ['id_atendimento','id_produto']
 
+
+class PessoasAtendimento(models.Model):
+    nome = models.CharField(max_length=120, unique=True)
+    qtd_pessoas = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(30)])
+    num_solidarios=models.IntegerField(validators=[MinValueValidator(0)])
+    local=models.CharField(max_length=100)
+    ativo=models.BooleanField(default=True)
+    ano=models.IntegerField(validators=[MinValueValidator(2023)])
+    class Meta:
+        ordering = ["nome"]
+        verbose_name = "Assistido"

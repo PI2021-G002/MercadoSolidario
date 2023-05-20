@@ -7,7 +7,7 @@ from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
 from pkg_resources import require
-from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol
+from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol, PessoasAtendimento
 from django.db.models import Q,F,Sum
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
@@ -154,7 +154,7 @@ def informaSolidarios(request):
     if request.method == 'GET':
         value = request.COOKIES.get('rascunho_id')
         if value is None: # exibe form de início
-            return render(request, 'atendimentos/atendimentos_solidarios.html')
+            return render(request, 'atendimentos/atendimentos_solidarios.html',{'assistidos':PessoasAtendimento.objects.all()})
         else:
             context = { 'rascunho_id': value, 'solidarios':request.COOKIES.get('solidarios')}
             return render(request, 'atendimentos/atendimentos_solidarios.html', {'context':context})
@@ -455,7 +455,7 @@ def relatoriosNecessidadePeriodo(request):
     itensAtendimentos = ItensAtendimento.objects.filter(id_atendimento_id__in=atendimentos).values('produto').annotate(tot_itens=Sum('quantidade'))
     #print(itensAtendimentos)
     estoques = getEstoquePorProduto()
-    
+
     context = {
         'atendimentos' : atendimentos,
         'itens_atendimentos' : itensAtendimentos,
