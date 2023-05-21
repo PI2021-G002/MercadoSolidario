@@ -154,7 +154,7 @@ def informaSolidarios(request):
     if request.method == 'GET':
         value = request.COOKIES.get('rascunho_id')
         if value is None: # exibe form de início
-            return render(request, 'atendimentos/atendimentos_solidarios.html',{'assistidos':PessoasAtendimento.objects.all()})
+            return render(request, 'atendimentos/atendimentos_solidarios.html',{'assistidos':PessoasAtendimento.objects.all().filter(ativo=True)})
         else:
             context = { 'rascunho_id': value, 'solidarios':request.COOKIES.get('solidarios')}
             return render(request, 'atendimentos/atendimentos_solidarios.html', {'context':context})
