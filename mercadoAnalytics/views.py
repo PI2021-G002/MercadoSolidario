@@ -3,7 +3,9 @@ from django.shortcuts import render
 from django.db import connection
 from django.shortcuts import render
 from .forms import FormListaCompras
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
+import os
+import mimetypes
 from django.contrib import messages
 import matplotlib.pyplot as plt
 import io
@@ -12,6 +14,7 @@ import math
 from datetime import datetime
 from datetime import date
 import pymysql
+
 
 
 from decouple import config
@@ -96,7 +99,7 @@ def config(request):
 	#TODO verificar se esta buscando no banco duas vezes
 	df = pd.read_sql('SELECT * FROM VW_ANALISE_PREVISAO',
                  connection,
-                 )
+                 parse_dates={"data":"%d-%m-%Y"})
 				 
 	df.columns = ['Produto', 'id_produto', 'Última Venda', 'Quantidade']
 	
@@ -200,15 +203,19 @@ def home_total_produtos_doados(request):
 	global uri_prod
 	global df
 	
-	df_local = df
+	df_local = df.query("`Última Venda` != '01-01-3000'")
 	indx = 0
 	qtde_produto_por_data = {}
-	
+	#print("vvvvvvvvvvvvvvvv -------- here")
+	#print(df_local,flush=True)
+	#print("^^^^^^^^^^^^^^^^ --- end here")
+
 	data = df_local[['Quantidade','Última Venda']]
 
 	#Agrupa por data de atendimento e soma as ocorrências
 	datas_group = data.groupby(['Última Venda']).sum()
 	d = pd.DataFrame(datas_group, columns=['Quantidade'])
+
 
 	#cria o dicionario para unir o resultado da agregação
 	for i in d.items():
@@ -223,6 +230,8 @@ def home_total_produtos_doados(request):
 	datas_agrupadas = []
 
 	for k, v in qtde_produto_por_data.items():
+		#print("v --->")
+		#print(v)
 		data = v[0].strftime("%m-%Y") #retira a data para realizar a soma
 		if data not in datas_unicas.keys():
 			datas_unicas[data] = v[1]
@@ -503,14 +512,24 @@ def proximo_atendimento(request):
 		estoque = verifica_estoque_produto(i) #retorna o valor do banco
 		dados_produto['qtde_estoque'] = estoque
 		dados_produto['previsao'] = previsao
-		dados_produto['qtde_compra'] = abs(estoque - int(previsao))
+		# print( "Previsao --> ",end="")
+		# print(previsao, end="")
+		# print("  Estoque --> ",end="")
+		# print(estoque , end="")
+		# print("  Diferença ---->> ",end="")
+		# print(int(previsao)-int(estoque))
+		if int(previsao) > int(estoque):
+			dados_produto['qtde_compra'] = int(previsao) - int(estoque)
+		else:
+			dados_produto['qtde_compra'] = 0
+		#dados_produto['qtde_compra'] = abs(estoque - int(previsao))
 		prod.append(dados_produto)
 		dados_produto = {}
 		
 	return render(request,'lista_compras.html', {'produtos':prod})
 
 #Cria a lista de compras
-def salva_lista_compra_pdf(dados, user_logado):
+def salva_lista_compra_pdf(dados, user_logado,request):
 	import matplotlib.pyplot as plt
 	from matplotlib.backends.backend_pdf import PdfPages
 
@@ -518,20 +537,19 @@ def salva_lista_compra_pdf(dados, user_logado):
 		dados, orient='index', columns =[
         'Produto Solidário', 'Quantidade necessária para comprar.'])
 
-	fig, ax =plt.subplots(figsize=(12,4))
-	plt.title("Lista de compras Mercado Solidário.")
+	fig, ax =plt.subplots(figsize=(8.26,11.7))
+	plt.title("Lista de compras Mercado Solidário")
 	ax.axis('tight')
 	ax.axis('off')
 	the_table = ax.table(cellText=df.values,colLabels=df.columns,loc='center')
-
-	pp = PdfPages("lista-compras-mercado-solidario.pdf")
+	fig.text(0.3,0.03,"Gerado por "+request.user.username+" em "+datetime.now().strftime("%d/%m/%Y %H:%M:%S"),size=12)
+	pp = PdfPages("lista-de-compras-mercado-solidario.pdf")
 	pp.savefig(fig, bbox_inches='tight')
 	pp.close()
 
 #Recupera os dados do formulario de entrada e solicita criação da lista de compras	
 def lista_compra_produtos(request):
 	if request.method == 'POST':
-		
 		#https://docs.djangoproject.com/en/4.2/ref/request-response/
 		user_logado = request.user.username
 		produtos = request.POST.getlist('produto')
@@ -551,10 +569,28 @@ def lista_compra_produtos(request):
 		
 		
 			#Adicionar um retorno da função e validar
-			salva_lista_compra_pdf(lista_compras, user_logado)
+			salva_lista_compra_pdf(lista_compras, user_logado,request)
 		
 			messages.success(request,"Lista de compras gerada com sucesso.",extra_tags="SUCESSOPDF")
+
 		else:
 			messages.error(request,"Nenhum produto selecionado para compra.")
-		
+
+
 		return HttpResponseRedirect('../') #esse retorno mantem na mesma página
+	else:
+		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+		# # Define the full file path
+		filepath = BASE_DIR + "/lista-de-compras-mercado-solidario.pdf"
+		# # Open the file for reading content
+		path = open(filepath, 'rb')
+		# # Set the mime type
+		mime_type, _ = mimetypes.guess_type(filepath)
+		# # Set the return value of the HttpResponse
+		response = HttpResponse(path, content_type=mime_type)
+		# # Set the HTTP header for sending to browser
+		response['Content-Disposition'] = "attachment; filename=%s" % "/lista-de-compras-mercado-solidario.pdf"
+		# # Return the response value
+		return response
+
+	

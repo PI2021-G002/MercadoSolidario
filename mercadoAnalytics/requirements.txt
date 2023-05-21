@@ -1,14 +1,10 @@
 absl-py==1.4.0
 asgiref==3.5.2
 astunparse==1.6.3
-<<<<<<< Updated upstream
 async-generator==1.10
 attrs==21.4.0
 autopep8==1.6.0
-backports.zoneinfo==0.2.1
-=======
 backports.zoneinfo==0.2.1;python_version<"3.9"
->>>>>>> Stashed changes
 cachetools==5.3.0
 certifi==2022.5.18.1
 cffi==1.15.0
@@ -72,15 +68,12 @@ scikit-learn==1.2.2
 scipy==1.10.1
 selenium==4.2.0
 six==1.16.0
-<<<<<<< Updated upstream
 sniffio==1.2.0
 sortedcontainers==2.4.0
 sqlparse==0.4.2
 tensorboard==2.12.2
-=======
 sqlparse==0.4.4
 tensorboard==2.12.0
->>>>>>> Stashed changes
 tensorboard-data-server==0.7.0
 tensorboard-plugin-wit==1.8.1
 tensorflow==2.12.0

@@ -12,26 +12,22 @@
 {% load mathfilters %}
 
 {% block conteudo %} 
-<style>
-      
-       .vertical-scrollable> .row {
-          position: absolute;
-          top: 160px;
-          bottom: 100px;
-          
-          overflow-y: scroll; 
-        }
-        .col-sm-8 { 
-            color: white; 
-            font-size: 24px; 
-            padding-bottom: 20px; 
-            padding-top: 18px; 
-        } 
-</style>   
-    
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+   
 
 <div class="container text-center">
+	<div class="row">
+		<div class="col-12">
+		{% if messages %}
+		{% for message in messages %}
+			<div class="alert">
+				<a class="btn btn-success btn-block" href="/analise/proximo_atendimento/gerarListaCompras/">Baixar PDF da Lista de Compras</a>
+			</div>
+		{% endfor %}
+		{% endif %}		
+		</div>
+	</div>
+</div>
+<div class="container text-center align-items-center">
 	<div class="row">
 		<div class="col-sm-12">
 			<h1> Lista de Compras. </h1>
@@ -42,9 +38,9 @@
 		<!--div class="col-sm-2">
 		</div-->
 
-		<div class="col-sm-10">
-			<div class="container vertical-scrollable">
-			  	<div class="row">
+		<div class="col-sm-12">
+			<div class="container vertical-scrollable align-items-center">
+			  	<div class="row align-items-center">
 					<form action="gerarListaCompras/" id="listaCompra" name="listaCompra" method="POST">
 					<table class="table">
 					  <thead>
@@ -62,14 +58,18 @@
 						{% csrf_token %}
 						<tr>
 							<td><input type="text" class="form-control" name="produto" id="produto" aria-describedby="basic-addon3" value="{{ produto.produto }}" readonly ></td>
-							<td><input type="text" class="form-control" name="estoque_atual" id="estoque_atual" aria-describedby="basic-addon3" value="{{ produto.qtde_estoque }}" readonly ></td>
-							<td><input type="text" class="form-control" name="previsao" id="previsao" aria-describedby="basic-addon3" value="{{ produto.previsao }}" readonly ></td>
+							<td><input class="form-control text-center" type="text" class="form-control" name="estoque_atual" id="estoque_atual" aria-describedby="basic-addon3" value="{{ produto.qtde_estoque }}" readonly ></td>
+							<td><input class="form-control text-center" type="text" class="form-control" name="previsao" id="previsao" aria-describedby="basic-addon3" value="{{ produto.previsao }}" readonly ></td>
 							<td>
-								<input type="text" class="form-control" name="qtde_comprar" id="qtde_comprar" aria-describedby="basic-addon3" value="{{ produto.qtde_compra }}" readonly >
+								<input class="form-control text-center" type="text" class="form-control" name="qtde_comprar" id="qtde_comprar" aria-describedby="basic-addon3" value="{{ produto.qtde_compra }}" readonly >
 							</td>
 							<td>
 								<div class="form-check">
-									<input class="form-check-input" name="comprar" value="{{ produto.produto }}" type="checkbox" id="flexCheckDefault" checked></input>
+									<input class="form-check-input" name="comprar" value="{{ produto.produto }}" type="checkbox" id="flexCheckDefault" 
+									{% if produto.qtde_compra > 0 %}
+									  checked
+									{% endif %}
+									></input>
 								</div>
 							</td>
 						</tr>
@@ -80,14 +80,6 @@
 					<button type="submit" class="btn btn-primary btn-lg">Gerar Lista de Compras</button>
 					<a href="../" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Voltar</a>
 					</form>
-					
-					{% if messages %}
-						{% for message in messages %}
-							<div class="alert {{ message.tags }} m-2" id="msg" role="alert">
-								{{ message }}
-							</div>
-						{% endfor %}
-					{% endif %}
 				</div>
 			</div>
 		</div>

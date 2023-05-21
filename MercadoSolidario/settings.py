@@ -19,7 +19,9 @@ pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+#print("__file --> "+__file__)
+#print ("BASE_DIR --> ") 
+#print(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -28,8 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
-DEBUG = False
+DEBUG = config('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['192.168.15.5','192.168.0.104','vitor-Inspiron-3442','localhost','mercadosolidario.sytes.net']
 
@@ -155,6 +156,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
+#print ("STATIC_ROOT --> ")
+#print (STATIC_ROOT)
 STATIC_URL = 'static/'
 
 # Default primary key field type
