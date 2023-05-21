@@ -1,0 +1,95 @@
+<!--!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard Mercado Solidário Analytics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  </head>
+  <body-->
+{% extends "base.html" %}
+
+{% load mathfilters %}
+
+{% block conteudo %} 
+   
+
+<div class="container text-center">
+	<div class="row">
+		<div class="col-12">
+		{% if messages %}
+		{% for message in messages %}
+			<div class="alert">
+				<a class="btn btn-success btn-block" href="/analise/proximo_atendimento/gerarListaCompras/">Baixar PDF da Lista de Compras</a>
+			</div>
+		{% endfor %}
+		{% endif %}		
+		</div>
+	</div>
+</div>
+<div class="container text-center align-items-center">
+	<div class="row">
+		<div class="col-sm-12">
+			<h1> Lista de Compras. </h1>
+		</div>
+	</div>
+	
+	<div class="row">
+		<!--div class="col-sm-2">
+		</div-->
+
+		<div class="col-sm-12">
+			<div class="container vertical-scrollable align-items-center">
+			  	<div class="row align-items-center">
+					<form action="gerarListaCompras/" id="listaCompra" name="listaCompra" method="POST">
+					<table class="table">
+					  <thead>
+						<tr>
+						  <th scope="col">Produto</th>
+						  <th scope="col">Estoque Atual</th>
+						  <th scope="col">Previsão</th>
+						  <th scope="col">Quantidade para comprar</th>
+						  <th scope="col">Comprar</th>
+						</tr>
+					  </thead>
+					  <tbody>
+						
+						{% for produto in produtos %}
+						{% csrf_token %}
+						<tr>
+							<td><input type="text" class="form-control" name="produto" id="produto" aria-describedby="basic-addon3" value="{{ produto.produto }}" readonly ></td>
+							<td><input class="form-control text-center" type="text" class="form-control" name="estoque_atual" id="estoque_atual" aria-describedby="basic-addon3" value="{{ produto.qtde_estoque }}" readonly ></td>
+							<td><input class="form-control text-center" type="text" class="form-control" name="previsao" id="previsao" aria-describedby="basic-addon3" value="{{ produto.previsao }}" readonly ></td>
+							<td>
+								<input class="form-control text-center" type="text" class="form-control" name="qtde_comprar" id="qtde_comprar" aria-describedby="basic-addon3" value="{{ produto.qtde_compra }}" readonly >
+							</td>
+							<td>
+								<div class="form-check">
+									<input class="form-check-input" name="comprar" value="{{ produto.produto }}" type="checkbox" id="flexCheckDefault" 
+									{% if produto.qtde_compra > 0 %}
+									  checked
+									{% endif %}
+									></input>
+								</div>
+							</td>
+						</tr>
+						{% endfor %}
+						
+					  </tbody>
+					</table>
+					<button type="submit" class="btn btn-primary btn-lg">Gerar Lista de Compras</button>
+					<a href="../" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Voltar</a>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-12">
+			<!--button type="submit" class="btn btn-primary btn-lg">Gerar Lista de Compras</button>
+			<a href="../" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Voltar</a-->
+		</div>
+	</div>
+</div>
+{% endblock conteudo %}
