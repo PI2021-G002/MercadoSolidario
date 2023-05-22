@@ -543,7 +543,8 @@ def salva_lista_compra_pdf(dados, user_logado,request):
 	ax.axis('off')
 	the_table = ax.table(cellText=df.values,colLabels=df.columns,loc='center')
 	fig.text(0.3,0.03,"Gerado por "+request.user.username+" em "+datetime.now().strftime("%d/%m/%Y %H:%M:%S"),size=12)
-	pp = PdfPages("lista-de-compras-mercado-solidario.pdf")
+	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	pp = PdfPages(BASE_DIR+"/lista-de-compras-mercado-solidario.pdf")
 	pp.savefig(fig, bbox_inches='tight')
 	pp.close()
 
