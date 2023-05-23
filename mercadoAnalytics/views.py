@@ -431,10 +431,14 @@ def atendimento_anterior(request):
 	#periodos = datas_atendimento
 	#datas = datas_atendimento
 	datas = []
-	
+	#print("--> Datas Atendimento",end="")
+	#print(datas_atendimento)	
 	for data_atendimento in datas_atendimento:
-		dia = data_atendimento.strftime('%d-%m-%Y')
-		datas.append(dia)
+		if data_atendimento is not pd.NaT:
+			dia = data_atendimento.strftime('%d-%m-%Y')
+			#print("-->",end="")
+			#print(data_atendimento)
+			datas.append(dia)
 		
 	return render(request,'atendimentos_anteriores.html', {'datas':datas})	
 	
@@ -446,13 +450,14 @@ def atendimento_anterior_data(request, data):
 	datas = []
 	
 	for data_atendimento in datas_atendimento:
-		dia = data_atendimento.strftime('%d-%m-%Y')
-		datas.append(dia)
-	
+		if data_atendimento is not pd.NaT:
+			dia = data_atendimento.strftime('%d-%m-%Y')
+			datas.append(dia)
+
 	#O banco so aceita datetime por isso deve converter a string para date antes
-	data = datetime.strptime(data, '%d-%m-%Y').date()
+	data = datetime.strptime(data, '%d-%m-%Y')
 	data_atendimento = data
-	
+	#print(data)
 	produtos_doados_atendimento = {}
 	
 	#Pesquisa um produto especifico na base de dados
@@ -543,7 +548,8 @@ def salva_lista_compra_pdf(dados, user_logado,request):
 	ax.axis('off')
 	the_table = ax.table(cellText=df.values,colLabels=df.columns,loc='center')
 	fig.text(0.3,0.03,"Gerado por "+request.user.username+" em "+datetime.now().strftime("%d/%m/%Y %H:%M:%S"),size=12)
-	pp = PdfPages("lista-de-compras-mercado-solidario.pdf")
+	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	pp = PdfPages(BASE_DIR+"/lista-de-compras-mercado-solidario.pdf")
 	pp.savefig(fig, bbox_inches='tight')
 	pp.close()
 

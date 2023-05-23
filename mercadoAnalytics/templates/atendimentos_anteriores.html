@@ -33,7 +33,7 @@
 <div class="container text-center">
 	<div class="row">
 		<div class="col-sm-12">
-			<h1>Mercado Solidário Analytics.</h1>
+			<h1>Mercado Solidário Analytics</h1>
 		</div>
 	</div>
 	<div class="row">
@@ -48,7 +48,7 @@
 		<div class="col-sm-10">
 			<div class="container vertical-scrollable">
 				<div class="row">
-					<h3>Atendimento realizado dia {{ data_atendimento }}</h3>
+					<h3>Atendimento realizado dia {{ data_atendimento|date:"d \d\e F \d\e Y" }}</h3>
 					<table class="table">
 					  <thead>
 						<tr>
@@ -60,7 +60,7 @@
 						{% for produto, quantidade in produtos_atendimento.items %}
 						<tr>
 						  <td>{{ produto }}</td>
-						  <td>{{ quantidade }}</td>
+						  <td>{{ quantidade|floatformat:0 }}</td>
 						</tr>
 						{% endfor %}
 					  </tbody>

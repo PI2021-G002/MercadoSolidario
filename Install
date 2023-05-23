@@ -1,7 +1,7 @@
 sudo apt install git
 sudo apt install python3-pip
 sudo apt install python3-venv
-sudo apt install mariadb-server
+sudo apt install virtualenv
 sudo apt install mariadb-client
 sudo apt install libmysqlclient-dev
 sudo apt install python3-mysql
@@ -9,29 +9,22 @@ sudo apt install python3-mysqldb
 sudo apt install python3-mysql.connector 
 sudo apt install python3-mysqldb-dbg
 
-
-pip3 install django
-
-pip3 install mysqlclient
-
-pip3 install django-rest-framework
-
-pip3 install django-mathfilters
-
 ----
 To make mysql work with django/python3
 
 https://stackoverflow.com/questions/454854/no-module-named-mysqldb
 
-pip install wheel
-pip install pymysql
+pip3 install wheel pymysql mysqlclient django django-mathfilters  django-rest-framework 
 
-in settings.py
+sudo apt-get install pkg-config libcairo2-dev libjpeg-dev libgif-dev
+
+
+-- in settings.py
 
 import pymysql
 pymysql.install_as_MySQLdb()
 
-pip install -U selenium
+pip3 install -U selenium
 
 Selenium drive configurate
 https://selenium-python.readthedocs.io/installation.html#drivers
