@@ -431,10 +431,14 @@ def atendimento_anterior(request):
 	#periodos = datas_atendimento
 	#datas = datas_atendimento
 	datas = []
-	
+	#print("--> Datas Atendimento",end="")
+	#print(datas_atendimento)	
 	for data_atendimento in datas_atendimento:
-		dia = data_atendimento.strftime('%d-%m-%Y')
-		datas.append(dia)
+		if data_atendimento is not pd.NaT:
+			dia = data_atendimento.strftime('%d-%m-%Y')
+			#print("-->",end="")
+			#print(data_atendimento)
+			datas.append(dia)
 		
 	return render(request,'atendimentos_anteriores.html', {'datas':datas})	
 	
@@ -446,13 +450,14 @@ def atendimento_anterior_data(request, data):
 	datas = []
 	
 	for data_atendimento in datas_atendimento:
-		dia = data_atendimento.strftime('%d-%m-%Y')
-		datas.append(dia)
-	
+		if data_atendimento is not pd.NaT:
+			dia = data_atendimento.strftime('%d-%m-%Y')
+			datas.append(dia)
+
 	#O banco so aceita datetime por isso deve converter a string para date antes
-	data = datetime.strptime(data, '%d-%m-%Y').date()
+	data = datetime.strptime(data, '%d-%m-%Y')
 	data_atendimento = data
-	
+	#print(data)
 	produtos_doados_atendimento = {}
 	
 	#Pesquisa um produto especifico na base de dados
