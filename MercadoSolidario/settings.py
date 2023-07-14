@@ -32,7 +32,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['192.168.15.5','192.168.0.104','vitor-Inspiron-3442','localhost','mercadosolidario.sytes.net']
+ALLOWED_HOSTS = ['192.168.15.6','192.168.0.104','vitor-Inspiron-3442','localhost','mercadosolidario.sytes.net']
 
 # Restframework definition
 REST_FRAMEWORK = {

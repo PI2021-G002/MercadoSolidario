@@ -34,6 +34,59 @@
        </div>
     </div>
   </div>
+</div>
+<div class="containner">
+  <!-- div class="row justify-content-end mb-3">
+    <div class="col-4">
+      <button class="btn btn-sm btn-warning" onclick="toggleLista();">
+        Mostra/Esconde Produtos
+      </button>
+    </div>
+  </div -->
+  <div class="row overflow-auto border" style="margin-top:2em;margin-bottom: 4em;">
+    <div style="max-height:450px; min-width: 300px;" class="row overflow-auto">
+      <div id="lista" class="collapse.show">
+        <div class="text-center">Clique no item abaixo para adicioná-lo na lista</div>
+          {% for produto in context.produtoSolidario %}
+            <div class="card">
+              <button class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-outline-dark{% else %}btn-outline-info{% endif %}"
+                onclick="$('#codigo').val( '{{produto.codigo_solidario }}' ); $('#formCodigo').submit()" style="height: 50px;">
+                {{ produto }}  -  {{ produto.preco_solidario }} Solidário{% if produto.preco_solidario > 1 %}s{%endif%}
+              </button>
+            </div>
+          {% endfor%}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- div class="row justify-content-end mb-3">
+    <div class="col-4">
+      <button class="btn btn-sm btn-warning" onclick="toggleScanner();">
+        Mostra/Esconde Scanner
+      </button>
+    </div>
+  </div -->
+  <div class="row border justify-content-center">
+    <div class="col-7">
+      <div id="scanner" class="collapse">
+        <div class="mt-2 text-center">Clique em "start scanning" e aponte para o código de barras ou QRCODE</div>
+          <div id="reader" width="300px"></div>
+            <div class="text-center mt-3">
+              <form name="formCodigo" id="formCodigo" method="POST" action="codigo">
+                <div class="form-group">
+                  <label for="codigo">Código de barras</label>
+                  <input type="text" name="codigo" id="codigo" class="form-control text-center" required ></input>
+                  <input type="hidden" name="srestantes" id="srestantes" value="{{ context.rascunho.solidarios }}" required ></input>
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-primary text-center mt-2 mb-2">Continuar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col">
       <table id='tbProdutos' class="stripe hover table table-bordered" style="width:100%; padding-top: 2em;  padding-bottom: 2em;">		
@@ -99,59 +152,7 @@
       </script>
     </div>
   </div>
-</div>
-<div class="containner">
-  <!-- div class="row justify-content-end mb-3">
-    <div class="col-4">
-      <button class="btn btn-sm btn-warning" onclick="toggleLista();">
-        Mostra/Esconde Produtos
-      </button>
-    </div>
-  </div -->
-  <div class="row overflow-auto border" style="margin-top:2em;margin-bottom: 4em;">
-    <div style="max-height:450px; min-width: 300px;" class="row overflow-auto">
-      <div id="lista" class="collapse.show">
-        <div class="text-center">Clique no item abaixo para adicioná-lo na lista</div>
-          {% for produto in context.produtoSolidario %}
-            <div class="card">
-              <button class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-outline-dark{% else %}btn-outline-info{% endif %}"
-                onclick="$('#codigo').val( '{{produto.codigo_solidario }}' ); $('#formCodigo').submit()" style="height: 50px;">
-                {{ produto }}  -  {{ produto.preco_solidario }} Solidário{% if produto.preco_solidario > 1 %}s{%endif%}
-              </button>
-            </div>
-          {% endfor%}
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- div class="row justify-content-end mb-3">
-    <div class="col-4">
-      <button class="btn btn-sm btn-warning" onclick="toggleScanner();">
-        Mostra/Esconde Scanner
-      </button>
-    </div>
-  </div -->
-  <div class="row border justify-content-center">
-    <div class="col-7">
-      <div id="scanner" class="collapse">
-        <div class="mt-2 text-center">Clique em "start scanning" e aponte para o código de barras ou QRCODE</div>
-          <div id="reader" width="300px"></div>
-            <div class="text-center mt-3">
-              <form name="formCodigo" id="formCodigo" method="POST" action="codigo">
-                <div class="form-group">
-                  <label for="codigo">Código de barras</label>
-                  <input type="text" name="codigo" id="codigo" class="form-control text-center" required ></input>
-                  <input type="hidden" name="srestantes" id="srestantes" value="{{ context.rascunho.solidarios }}" required ></input>
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary text-center mt-2 mb-2">Continuar</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <div class="row">
     <div class="text-center mt-5">
       <form name="formConcluir" id="formConcluir" method="POST" action="concluir">
@@ -178,7 +179,7 @@
     </div>
   </div>
 </div>
-<script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+<!-- script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
 <script>
   //https://stackoverflow.com/questions/879152/how-do-i-make-javascript-beep
   function beep() {
@@ -201,5 +202,5 @@
   $('#reader__dashboard_section_csr').children().children().click();
 
   //$('#reader__dashboard_section_csr').children().last().children().first().click();
-</script>
+</script -->
 {% endblock conteudo %}
