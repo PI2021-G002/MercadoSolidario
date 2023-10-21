@@ -23,11 +23,11 @@
 	<div class="row">
 		<div class="col-sm-2">
 			<div class="list-group">
-			  <a href="produtos_atendimento/" class="list-group-item list-group-item-action" aria-current="true">
+			  <a href="{% url 'AcompanhamentoProdutos' %}" class="list-group-item list-group-item-action" aria-current="true">
 				Acompanhamento Produtos
 			  </a>
-			  <a href="proximo_atendimento/" class="list-group-item list-group-item-action">Previsão Próximo Atendimento</a>
-			  <a href="atendimento_anterior/" class="list-group-item list-group-item-action">Atendimentos Anteriores</a>
+			  <a href="{% url 'PrevisaoProximoAtendimento' %}" class="list-group-item list-group-item-action">Previsão Próximo Atendimento</a>
+			  <a href="{% url 'AtendimentoAnterior' %}" class="list-group-item list-group-item-action">Atendimentos Anteriores</a>
 			</div>
 		</div>
 		<div class="col-sm-5">
