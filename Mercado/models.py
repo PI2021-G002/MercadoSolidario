@@ -5,6 +5,7 @@ from datetime import date, datetime,timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator,MaxValueValidator
 #from dateutil.relativedelta import relativedelta
+from django.dispatch import receiver
 
 def numberOfDays( y, m):
       leap = 0
@@ -82,6 +83,12 @@ class CodBarProdSol(models.Model):
         verbose_name = "Código do Produto"
         verbose_name_plural = "Códigos dos Produtos"
         ordering = ['id_produto']
+
+#adiocionado em 20230927 para que quando um novo produto for criado não precise entrar manualmente com um código de barras para tudo funcionar cmo esperado
+@receiver(post_save, sender=ProdutoSolidario)
+def update_CodBarProdSol(sender, instance, created, **kwargs):
+    if created:
+        CodBarProdSol.objects.create(id_produto=instance,codigo_barras=instance.codigo_solidario)
 
 class FonteDoacao(models.Model):
     nome = models.CharField(max_length=50, unique=True)

@@ -5,7 +5,7 @@
 <div class="container">
   <div class="row">
     <div class="col text-center">
-      <h2>Atendimento - Mercado Solidário CS - Solidários</h2>
+      <h2>Atendimento - Mercado Solidário CS - Solidários - Produto</h2>
     </div>
   </div>
   <div class="row align-items-center border">
@@ -24,7 +24,7 @@
     <div class="col">      
       <div class="row">Solidários</div>
       <div id="solidarios" class="row" style="font-size:30px;font-weight:bold;">
-        <span class="text-center">{{ context.srestantes }}</span>
+        {{ context.srestantes }}
       </div>
     </div>
     <div class="col">      
@@ -124,24 +124,31 @@
 
       <script>
         $(function(){
-            $('#id_quantidade').keyup(function(){
+            $('#id_quantidade').change(function(){
                var id_sol = parseFloat($('#id_solidarios').val()) || 0;
                var quantidade = parseFloat($('#id_quantidade').val()) || 0;
                var solidarios = parseFloat($('#solidarios').html()) || 0;
                $('#restantes').html(solidarios - (id_sol*quantidade));
             });
             $('#id_quantidade').attr("max",$('#id_max_fam').val() )        });
+        $(function(){ 
+          $(document).ready(function(){
+            $('#id_quantidade').change();
+          });
+                      });
         $(function(){
           $('#btn-minus').click(function(){
             //alert("here");
             var v = parseInt($('#id_quantidade').val());
             if (v > 1) $('#id_quantidade').val(v-1);
+            $('#id_quantidade').change();
           });
           $('#btn-plus').click(function(){
             //alert("here");
             var v = parseInt($('#id_quantidade').val());
             var m = parseInt($('#id_quantidade').attr("max"),10);
             if (v < m) $('#id_quantidade').val(v+1);
+            $('#id_quantidade').change();
           });
         });
       </script>

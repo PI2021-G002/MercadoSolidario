@@ -9,7 +9,7 @@ from django.utils.formats import date_format
 from pkg_resources import require
 from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol, PessoasAtendimento
 from django.db.models import Q,F,Sum
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponse
@@ -20,6 +20,7 @@ from django.contrib import messages
 from datetime import date, datetime
 from django.db.models.functions import Concat
 from django.forms import model_to_dict
+from django.urls import reverse
 
 # Create your views here.
 
@@ -192,6 +193,12 @@ def iniciaRascunho(request):
 
 @login_required
 def codigoMercado(request):
+    # evitar erro 500 quando usa o back do browser
+    try: 
+        tmp = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+    except Exception as e :
+        messages.error(request,'Atendimento já foi encerrado')
+        return HttpResponseRedirect(reverse('AtendimentoInicio'))       
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # É o post com os dados para cadastrar
