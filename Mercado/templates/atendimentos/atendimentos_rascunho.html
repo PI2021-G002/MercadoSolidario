@@ -45,19 +45,50 @@
   </div -->
   <div class="row overflow-auto border" style="margin-top:2em;margin-bottom: 4em;">
     <div style="max-height:450px; min-width: 300px;" class="row overflow-auto">
-      <div id="lista" class="collapse.show">
         <div class="text-center">Clique no item abaixo para adicioná-lo na lista</div>
+          <table id="tbItens">
+            <thead>
+              <th></th>
+            </thead>
+            <tbody>
           {% for produto in context.produtoSolidario %}
-            <div class="card">
-              <button class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-outline-dark{% else %}btn-outline-info{% endif %}"
-                onclick="$('#codigo').val( '{{produto.codigo_solidario }}' ); $('#formCodigo').submit()" style="height: 50px;">
+             <tr class="p-0"><td><button class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-outline-dark{% else %}btn-outline-info{% endif %}"
+                onclick="$('#codigo').val( '{{produto.codigo_solidario }}' ); $('#formCodigo').submit()" style="height:50px;width:100%;">
                 {{ produto }}  -  {{ produto.preco_solidario }} Solidário{% if produto.preco_solidario > 1 %}s{%endif%}
               </button>
-            </div>
-          {% endfor%}
+             </td></tr> 
+          {% endfor %}
+            </tbody>
+          </table>
         </div>
+        <script lang="javascript">
+          $(document).ready( function () {
+  
+              var tableto = $('#tbItens').DataTable( {
+                  language: {
+                  url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                  },
+                  responsive : true,
+                  "searching" : true,
+                  "paging" : false,
+                  "scrollY" : "400px",
+                  "ordering" : false,
+                  "info" : false
+              } )
+              .responsive.recalc();
+              setTimeout(function(){
+                var a=0; 
+                while ( a == 0 ) {
+                    if ($('#tbItens_filter').length){a=1;}       
+                };
+                $('#tbItens_filter').css('float','left');
+                $('#tbItens_filter').addClass('mt-2 ps-3');
+                
+              },2000);
+              } );
+        </script>
+
       </div>
-    </div>
   </div>
   <!-- div class="row justify-content-end mb-3">
     <div class="col-4">
@@ -143,14 +174,14 @@
           .columns.adjust()
           .responsive.recalc();
           } );
-          function toggleLista(){
-            $('#lista').attr('class', function(index, attr){ return attr == 'collapse' ? 'collapse.show' : 'collapse';});
-          }
-          function toggleScanner(){
-            $('#scanner').attr('class', function(index, attr){ return attr == 'collapse' ? 'collapse.show' : 'collapse';});
-          }
+          // function toggleLista(){
+          //   $('#lista').attr('class', function(index, attr){ return attr == 'collapse' ? 'collapse.show' : 'collapse';});
+          // }
+          // function toggleScanner(){
+          //   $('#scanner').attr('class', function(index, attr){ return attr == 'collapse' ? 'collapse.show' : 'collapse';});
+          // }
       </script>
-    </div>
+     </div>
   </div>
 
   <div class="row">
@@ -175,6 +206,7 @@
       });
     </script>
     </div>
+
     <div class="col-sm">
     </div>
   </div>
