@@ -322,7 +322,7 @@ def codigoMercado(request):
             'itens':itens,
             'produtoSolidario':produtoSolidario
         }
-        return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context,'form':form})
+        return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context})
 
 def cancelarRascunho(request):
     # if this is a POST request we need to process the form data
@@ -348,6 +348,10 @@ def concluirAtendimento(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         value = request.COOKIES.get('rascunho_id')
+        if not value:
+            response = HttpResponseRedirect("rascunho")
+            messages.error(request, "Atendimento já foi encerrado.")
+            return response
         # pega os dados do post e prepara para o processamento
         rascunho = AtendimentoRascunho.objects.get(id__exact=value)
         itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
