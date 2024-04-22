@@ -144,9 +144,9 @@ class AtendimentoRascunho(models.Model):
     data = models.DateField(auto_now=False, auto_now_add=True)
     finalizado = models.BooleanField(default=False)
     solidarios = models.IntegerField(default=0)
-    assitido = models.IntegerField(null=True, default=None)
+    assistido = models.IntegerField(null=True, default=None)
     data_hora_inicio = models.DateTimeField(auto_now_add=True,null=True)
-    id_assitido = models.ForeignKey(
+    id_assistido = models.ForeignKey(
        PessoasAtendimento,
        on_delete = models.DO_NOTHING,
        verbose_name="Assistido",
@@ -176,7 +176,7 @@ class Atendimento(models.Model):
     solidarios = models.IntegerField(default=0)
     data_hora_inicio = models.DateTimeField(null=True)
     data_hora_termino = models.DateTimeField(auto_now_add=True,null=True)
-    id_assitido = models.ForeignKey(
+    id_assistido = models.ForeignKey(
        PessoasAtendimento,
        on_delete = models.DO_NOTHING,
        verbose_name="Assistido",
