@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <h2>Atendimento - Mercado Solidário CS - Solidários - Produto - CAIXA</h2>
+    </div>
+  </div>
+  <div class="row align-items-center border">
+    <div class="col center">
+      <div class="row align-items-center" >Voluntário</div>
+      <div class="row align-items-center">
+        {{ context.rascunho.atendente }}
+      </div>
+    </div>
+    <div class="col">
+      <div class="row align-items-center">Data</div>
+      <div class="row align-items-center">
+        {{ context.rascunho.data|date:"d/m/Y"  }}
+      </div>
+    </div>
+    <div class="col">      
+      <div class="row">Solidários</div>
+      <div id="solidarios" class="row" style="font-size:30px;font-weight:bold;">
+        {{ context.srestantes }}
+      </div>
+    </div>
+    <div class="col">      
+      <div class="row">Restantes</div>
+      <div id="restantes" class="row" style="text-align:right;font-size:30px;font-weight:bold;">
+        <span class="text-center">{{ context.srestantes }}</span>
+       </div>
+    </div>
+  </div>
+</div>
+<div class="container mt-2">
+  <div class="form-group row">
+    <div class="col-6 mt-auto">
+      <form method="POST">
+          {% csrf_token %}
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}  
+          {% endfor %}
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.produto.id_for_label }}">{{ form.produto.label }}</label>
+          {{ form.produto }}
+      </div>
+    </div>
+    <div class="col mt-auto">
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.solidarios.id_for_label }}"> {{ form.solidarios.label }}</label>
+        {{ form.solidarios }}
+      </div>
+    </div>
+    <div class="col mt-auto">
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.max_fam.id_for_label }}"> {{ form.max_fam.label }}</label>
+        {{ form.max_fam }}
+      </div>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col mt_auto">
+      <div class="fieldWrapper">
+        <label class="col-form-label" for="{{ form.quantidade.id_for_label }}">{{ form.quantidade.label }}</label>
+        <div class="input-group">
+          <button id="btn-minus" class="btn btn-primary btn-number" type="button" 
+                  data-type="minus" data-field="quantidade">
+            <div class="material-icons" >remove</div>
+          </button>
+          <input type="number" name="quantidade" value="1" min="1" class="form-control text-center"
+                id="id_quantidade" max="1" required>
+          <button id="btn-plus" class="btn btn-primary btn-number" type="button"
+                   data-type="plus" data-field="quantidade">
+            <div class="material-icons">add</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col mt_auto">
+      <div class="fieldWrapper align-items-center text-center">
+          <table class="table table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th scope="col">Validade</th>
+                <th scope="col">Em Estoque</th>
+              </tr>
+            </thead>
+            <div class="myradio"> 
+            <tbody>
+
+                {% for item in context.estoque %}
+            <tr>
+              <td>
+                <input id="id_data_{{ forloop.counter0 }}" name="dataValidade"
+                       type="radio" value='{{ item.validade|date:"Y-m-d" }}' required>
+                {{ item.validade|date:"  m / Y" }}
+              </td>
+              <td>
+                {{ item.em_estoque }}
+              </td>
+             </tr>
+          {% empty %}
+            Sem Estoque
+          {% endfor %}
+
+      </tbody>
+    </div> 
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">       
+    <div class="mt-2 col-auto">
+        <button type="submit" class="btn btn-primary text-center center mt-2">Continuar</button>
+    </div>
+    </form>
+  </div>
+  <div>
+
+      <script>
+        $(function(){
+            $('#id_quantidade').change(function(){
+               var id_sol = parseFloat($('#id_solidarios').val()) || 0;
+               var quantidade = parseFloat($('#id_quantidade').val()) || 0;
+               var solidarios = parseFloat($('#solidarios').html()) || 0;
+               $('#restantes').html(solidarios - (id_sol*quantidade));
+            });
+            $('#id_quantidade').attr("max",$('#id_max_fam').val() )        });
+        $(function(){ 
+          $(document).ready(function(){
+            $('#id_quantidade').change();
+          });
+                      });
+        $(function(){
+          $('#btn-minus').click(function(){
+            //alert("here");
+            var v = parseInt($('#id_quantidade').val());
+            if (v > 1) $('#id_quantidade').val(v-1);
+            $('#id_quantidade').change();
+          });
+          $('#btn-plus').click(function(){
+            //alert("here");
+            var v = parseInt($('#id_quantidade').val());
+            var m = parseInt($('#id_quantidade').attr("max"),10);
+            if (v < m) $('#id_quantidade').val(v+1);
+            $('#id_quantidade').change();
+          });
+        });
+      </script>
+  </div>
+</div>
+
+
+{% endblock conteudo %}

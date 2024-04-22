@@ -127,6 +127,16 @@ class Estoque(models.Model):
     def vence_em_noventa_dias(self):
         return self.validade < date.today()+timedelta(90)
 
+class PessoasAtendimento(models.Model):
+    nome = models.CharField(max_length=120, unique=True)
+    qtd_pessoas = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(30)])
+    num_solidarios=models.IntegerField(validators=[MinValueValidator(0)])
+    local=models.CharField(max_length=100)
+    ativo=models.BooleanField(default=True)
+    ano=models.IntegerField(validators=[MinValueValidator(2023)])
+    class Meta:
+        ordering = ["nome"]
+        verbose_name = "Assistido"
 
 class AtendimentoRascunho(models.Model):
     tipo = models.CharField(max_length=50)
@@ -134,6 +144,14 @@ class AtendimentoRascunho(models.Model):
     data = models.DateField(auto_now=False, auto_now_add=True)
     finalizado = models.BooleanField(default=False)
     solidarios = models.IntegerField(default=0)
+    data_hora_inicio = models.DateTimeField(auto_now_add=True,null=True)
+    id_assistido = models.ForeignKey(
+       PessoasAtendimento,
+       on_delete = models.DO_NOTHING,
+       verbose_name="Assistido",
+       default=None,
+       null=True
+    )
 
 class ItensAtendimentoRascunho(models.Model):
     id_atendimento = models.ForeignKey(
@@ -155,6 +173,15 @@ class Atendimento(models.Model):
     data = models.DateField(auto_now=False, auto_now_add=False)
     finalizado = models.BooleanField(default=False)
     solidarios = models.IntegerField(default=0)
+    data_hora_inicio = models.DateTimeField(null=True)
+    data_hora_termino = models.DateTimeField(auto_now_add=True,null=True)
+    id_assistido = models.ForeignKey(
+       PessoasAtendimento,
+       on_delete = models.DO_NOTHING,
+       verbose_name="Assistido",
+       default=None,
+       null=True
+    )
 
 class ItensAtendimento(models.Model):
     id_atendimento = models.ForeignKey(
@@ -198,15 +225,3 @@ class ItensAtendimentoTemplate(models.Model):
         verbose_name = "Itens"
         verbose_name_plural = "Modelo de Itens"
         ordering = ['id_atendimento','id_produto']
-
-
-class PessoasAtendimento(models.Model):
-    nome = models.CharField(max_length=120, unique=True)
-    qtd_pessoas = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(30)])
-    num_solidarios=models.IntegerField(validators=[MinValueValidator(0)])
-    local=models.CharField(max_length=100)
-    ativo=models.BooleanField(default=True)
-    ano=models.IntegerField(validators=[MinValueValidator(2023)])
-    class Meta:
-        ordering = ["nome"]
-        verbose_name = "Assistido"

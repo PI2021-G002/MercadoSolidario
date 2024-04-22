@@ -5,7 +5,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6 offset-md-3">
-      <h2 class="text-center">Atendimento Mercado  - Mercado Solidário CS</h2>
+      <h2 class="text-center">Atendimento Mercado  - Mercado Solidário CS - CAIXA</h2>
     </div>
   </div>
   <div class="row">
@@ -14,7 +14,7 @@
         {% if context.rascunho_id %}
            <div>
              <p>ATENÇÃO: Você tem um atendimento de {{ context.solidarios }} solidários em andamento. Continua ou encerra sem salvar?</p>
-             <a class="btn btn-primary mb-5" href="rascunho">Continuar</a>
+             <a class="btn btn-primary mb-5" href="rascunhoCaixa">Continuar</a>
              <a class="btn btn-danger mt-5" href="cancelar">Cancelar atendimento (todos os dados do atendimento serão apagados)</a>
             </div>
         {% else %}
@@ -30,7 +30,7 @@
           <div class="text-center">Ou Digite a quantidade de solidários e pressione "Continuar" para iniciar o atendimento</div>
           <div>
 
-            <form name="formSolidarios" id="formSol" method="POST" action="rascunho">
+            <form name="formSolidarios" id="formSol" method="POST" action="rascunhoCaixa">
               <div class="form-group">
                 <label for="solidario">Quantidade de Solidários</label>
                 <input type="hidden" name="assistido" id="assistido" ></input>
