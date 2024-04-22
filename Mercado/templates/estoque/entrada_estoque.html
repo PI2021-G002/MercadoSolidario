@@ -16,13 +16,13 @@
     <div class="col-sm">
     </div>
     <div class="col">
-      <div class="text-center">Clique em "start scanning" e aponte para o código de barras</div>
+      <div class="text-center">Clique em "start scanning" e aponte para o código de barras ou escaneie pelo leitor do caixa</div>
       <div id="reader" width="600px"></div>
       <div class="text-center mt-3">
         <form name="formCodigo" id="formCodigo" method="POST" action="codigo">
           <div class="form-group">
             <label for="codigo">Código de barras</label>
-            <input type="text" name="codigo" id="codigo" class="form-control-lg text-center" required ></input>
+            <input type="text" name="codigo" id="codigo" class="form-control-lg text-center" required tabindex="0"></input>
             {% csrf_token %}
           </div>
           <button type="submit" class="btn btn-primary text-center">Continuar</button>
@@ -57,5 +57,8 @@
   $('#reader__dashboard_section_csr').children().children().click();
 
   //$('#reader__dashboard_section_csr').children().last().children().first().click();
+  window.onload = function() {
+        document.getElementById("codigo").focus();
+  };
 </script>
 {% endblock conteudo %}

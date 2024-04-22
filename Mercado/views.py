@@ -164,12 +164,28 @@ def informaSolidarios(request):
     return render(request, 'atendimentos/atendimentos_solidarios.html', {'context':context})
 
 @login_required
+def informaSolidariosCaixa(request):
+#    path('Atendimento/mercado',TemplateView.as_view(template_name='atendimentos/atendimentos_solidarios.html'),name='Atendimentos'),
+    context = { }
+    if request.method == 'GET':
+        value = request.COOKIES.get('rascunho_id')
+        if value is None: # exibe form de início
+            return render(request, 'atendimentos/atendimentos_solidarios_caixa.html',{'assistidos':PessoasAtendimento.objects.all().filter(ativo=True)})
+        else:
+            context = { 'rascunho_id': value, 'solidarios':request.COOKIES.get('solidarios')}
+            return render(request, 'atendimentos/atendimentos_solidarios_caixa.html', {'context':context})
+    else:
+        pass
+    return render(request, 'atendimentos/atendimentos_solidarios_caixa.html', {'context':context})
+
+@login_required
 def iniciaRascunho(request):
     # if this is a POST request we need to process the form data
     context = {}
     if request.method == 'POST':
         solidarios = request.POST.__getitem__('solidario')
         value = request.COOKIES.get('rascunho_id')
+        assistido = request.POST.__getitem__('assistido')
         if value is None:
             rascunho = AtendimentoRascunho.objects.create(tipo='mercado',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios);
             if rascunho:
@@ -177,6 +193,7 @@ def iniciaRascunho(request):
                 response = HttpResponseRedirect('rascunho')
                 response.set_cookie('rascunho_id',rascunho.id)
                 response.set_cookie('solidarios',solidarios)
+                response.set_cookie('assistido',assistido)
                 context = {
                     'rascunho' : rascunho
                 }
@@ -190,6 +207,36 @@ def iniciaRascunho(request):
        'produtoSolidario':produtoSolidario
     }
     return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context})
+
+@login_required
+def iniciaRascunhoCaixa(request):
+    # if this is a POST request we need to process the form data
+    context = {}
+    if request.method == 'POST':
+        solidarios = request.POST.__getitem__('solidario')
+        value = request.COOKIES.get('rascunho_id')
+        assistido = request.POST.__getitem__('assistido')
+        if value is None:
+            rascunho = AtendimentoRascunho.objects.create(tipo='mercado',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios);
+            if rascunho:
+        #        response = HttpResponse("Rascunho de Atendimento Criado com sucesso")
+                response = HttpResponseRedirect('rascunhoCaixa')
+                response.set_cookie('rascunho_id',rascunho.id)
+                response.set_cookie('solidarios',solidarios)
+                response.set_cookie('assistido',assistido)
+                context = {
+                    'rascunho' : rascunho
+                }
+                return response
+    rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+    itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+    context = {
+       'rascunho':rascunho,
+       'itens':itens,
+       'produtoSolidario':produtoSolidario
+    }
+    return render(request, 'atendimentos/atendimentos_rascunho_caixa.html', {'context':context})
 
 @login_required
 def codigoMercado(request):
@@ -323,6 +370,139 @@ def codigoMercado(request):
             'produtoSolidario':produtoSolidario
         }
         return render(request, 'atendimentos/atendimentos_rascunho.html', {'context':context})
+
+@login_required
+def codigoMercadoCaixa(request):
+    # evitar erro 500 quando usa o back do browser
+    try: 
+        tmp = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+    except Exception as e :
+        messages.error(request,'Atendimento já foi encerrado')
+        return HttpResponseRedirect(reverse('AtendimentoInicio'))       
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # É o post com os dados para cadastrar
+        form = FormAtendimento(request.POST)
+        if request.POST.__contains__('quantidade'):
+            # check whether it's valid: e data de validade maior que hoje.
+            if form.is_valid() and (form.cleaned_data['dataValidade'].isoformat() >= datetime.now().isoformat()):
+                # save data
+                #id_produto = ProdutoSolidario(request.POST.__getitem__('idp'))
+                #id_produto.id = 
+                quantidade = request.POST.__getitem__('quantidade')
+                # com o uso do widget do forms -> validade = request.POST.__getitem__('dataValidade_year') + '-' + request.POST.__getitem__('dataValidade_month') + '-' + request.POST.__getitem__('dataValidade_day')
+                validade = request.POST.__getitem__('dataValidade')
+                # Cria registro e mostra mensagem de sucesso.
+                atendimento = AtendimentoRascunho.objects.filter(id=request.COOKIES.get('rascunho_id')).first()
+                codbar = CodBarProdSol.objects.filter(codigo_barras=request.POST.__getitem__('codigo_barras')).first()
+                produto = request.POST.__getitem__('produto')
+                solidarios = int(float((request.POST.__getitem__('solidarios'))))
+                pesquisaItem = ItensAtendimentoRascunho.objects.filter(id_atendimento=atendimento,id_codigo=codbar.id_produto).first()
+                if pesquisaItem : # caso exista um item do tipo da lista não deixa colocar novamente
+                    response = HttpResponseRedirect('rascunhoCaixa')
+                    messages.error(request, "Já existe um item desse tipo na lista. Tente outro produto solidário.")
+                    return response
+                item = ItensAtendimentoRascunho.objects.create( id_atendimento=atendimento,
+                                                                id_codigo=codbar.id_produto,
+                                                                produto=produto,
+                                                                quantidade=quantidade,
+                                                                validade=validade,
+                                                                solidarios=solidarios,
+                                                                )
+                messages.success(request, "Item Inserido na Lista com Sucesso")
+                # sai da classe e volta na tela de scan com a mensagem
+                rascunho = AtendimentoRascunho.objects.get(id__exact=atendimento.id)   
+                itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                context = {
+                    'rascunho':rascunho,
+                    'itens':itens,
+                    'produto':produto,
+                    'codigo':codbar,
+                    'produtoSolidario':produtoSolidario
+                }
+                return render(request, 'atendimentos/atendimentos_rascunho_caixa.html', {'context':context,'form':form})
+            else:
+                form = FormAtendimento(request.POST)
+                messages.error(request,"Data de validade menor ou igual a hoje. O produto está vencido ou sem estoque?")
+                rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+                estoque = Estoque.objects.filter(id_produto_id=request.POST.__getitem__('idp')).order_by('validade')
+                context = {
+                   'rascunho':rascunho,
+                   'estoque':estoque,
+                }
+                return render(request, 'atendimentos/atendimentos_rascunho_produto_caixa.html', {'context':context,'form':form})
+        else:
+            #É o post para procurar o produto
+            codigo_barras=request.POST.__getitem__('codigo')
+            if codigo_barras.startswith("202210") : 
+               # para QRCode
+               produto = ProdutoSolidario.objects.filter(codigo_solidario=codigo_barras).first()
+               prodsol = CodBarProdSol.objects.filter(id_produto_id=produto.id).first()
+               if produto and prodsol:
+                   codigo_barras = prodsol.codigo_barras
+               else:
+                    #não encontrou o produto
+                    messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado. (qrok)")
+                    rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+                    itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                    context = {
+                    'rascunho':rascunho,
+                    'itens':itens,
+                    'produtoSolidario':produtoSolidario
+                    }
+                    return render(request, 'atendimentos/atendimentos_rascunho_caixa.html', {'context':context,'form':form})
+            else :
+               #  para códigos de barras
+               prodsol=CodBarProdSol.objects.filter(codigo_barras=codigo_barras).first()
+              
+            # se o código já está cadastrado
+            if prodsol :
+                produto=ProdutoSolidario.objects.get(id__exact=prodsol.id_produto_id)
+                categoria=Categoria.objects.get(id__exact=produto.id_categoria_id)
+                form=FormAtendimento(initial={
+                    'idp':produto.id,
+                    'produto':categoria.categoria + ' ' + str(produto.quantidade) + produto.unidade,
+                    'max_fam':produto.max_familia,
+                    'solidarios':produto.preco_solidario,
+                    'codigo_barras':codigo_barras,
+                    'id_prodsol':prodsol.id,
+                    })
+                rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+                itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                estoque = Estoque.objects.filter(id_produto_id=produto.id).filter(~Q(quantidade=F('quantidade_saida'))).order_by('validade')
+                context = {
+                    'rascunho':rascunho,
+                    'itens':itens,
+                    'produto':produto,
+                    'codigo':codigo_barras,
+                    'srestantes':request.POST.__getitem__('srestantes'),
+                    'estoque':estoque
+                }
+                return render(request, 'atendimentos/atendimentos_rascunho_produto_caixa.html', {'context':context,'form':form})
+            else:
+                #não encontrou o produto
+                messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado.")
+                rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+                itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                context = {
+                    'rascunho':rascunho,
+                    'itens':itens,
+                    'produtoSolidario':produtoSolidario
+                }
+                return render(request, 'atendimentos/atendimentos_rascunho_caixa.html', {'context':context,'form':form})
+    else: # é um GET - informar o form e carregar os dados
+        rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
+        itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
+        produtoSolidario=ProdutoSolidario.objects.all()
+        context = {
+            'rascunho':rascunho,
+            'itens':itens,
+            'produtoSolidario':produtoSolidario
+        }
+        return render(request, 'atendimentos/atendimentos_rascunho_caixa.html', {'context':context})
 
 def cancelarRascunho(request):
     # if this is a POST request we need to process the form data
