@@ -144,7 +144,6 @@ class AtendimentoRascunho(models.Model):
     data = models.DateField(auto_now=False, auto_now_add=True)
     finalizado = models.BooleanField(default=False)
     solidarios = models.IntegerField(default=0)
-    assistido = models.IntegerField(null=True, default=None)
     data_hora_inicio = models.DateTimeField(auto_now_add=True,null=True)
     id_assistido = models.ForeignKey(
        PessoasAtendimento,
