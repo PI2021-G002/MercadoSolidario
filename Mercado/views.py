@@ -7,7 +7,7 @@ from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
 from pkg_resources import require
-from .models import AtendimentoRascunho, Categoria, Estoque, Atendimento, ItensAtendimento, ItensAtendimentoRascunho, ProdutoSolidario, FonteDoacao, CodBarProdSol, PessoasAtendimento
+from .models import *
 from django.db.models import Q,F,Sum
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
@@ -187,7 +187,7 @@ def iniciaRascunho(request):
         value = request.COOKIES.get('rascunho_id')
         assistido = request.POST.__getitem__('assistido')
         if value is None:
-            rascunho = AtendimentoRascunho.objects.create(tipo='mercado',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios);
+            rascunho = AtendimentoRascunho.objects.create(tipo='mercado',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios,id_assistido_id=assistido)
             if rascunho:
         #        response = HttpResponse("Rascunho de Atendimento Criado com sucesso")
                 response = HttpResponseRedirect('rascunho')
@@ -217,7 +217,7 @@ def iniciaRascunhoCaixa(request):
         value = request.COOKIES.get('rascunho_id')
         assistido = request.POST.__getitem__('assistido')
         if value is None:
-            rascunho = AtendimentoRascunho.objects.create(tipo='mercado',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios);
+            rascunho = AtendimentoRascunho.objects.create(tipo='mercadoCaixa',atendente=request.user.username,data=datetime.now(),finalizado=False,solidarios=solidarios,id_assistido_id=assistido)
             if rascunho:
         #        response = HttpResponse("Rascunho de Atendimento Criado com sucesso")
                 response = HttpResponseRedirect('rascunhoCaixa')
@@ -551,8 +551,10 @@ def concluirAtendimento(request):
             for item in itens:
               estoques = Estoque.objects.filter(id_produto=item.id_codigo,validade=item.validade)
               for estoque in estoques:
+                if estoque.quantidade - estoque.quantidade_saida >= item.quantidade:
                   estoque.quantidade_saida = estoque.quantidade_saida + item.quantidade
                   estoque.save()
+                  break
         # se não tiver todos os itens gera mensagem de erro.
         else:
             response = HttpResponseRedirect("rascunho")
@@ -560,7 +562,10 @@ def concluirAtendimento(request):
             return response
         # copia a tabela para a tabela atendimento
         kwargs = model_to_dict(rascunho,exclude=['id'])
+        assistido = rascunho.id_assistido
         kwargs['data'] = datetime.now()
+        kwargs['id_assistido'] = assistido
+        kwargs['data_hora_inicio'] = rascunho.data_hora_inicio
         atendimento = Atendimento.objects.create(**kwargs)
         # copia os itens da tabela itensRascunho para a tabela itens
         for item in itens:

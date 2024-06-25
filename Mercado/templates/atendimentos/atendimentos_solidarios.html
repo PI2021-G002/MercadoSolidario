@@ -45,7 +45,7 @@
               var selecao = document.getElementById("selectid");
               var valor = selecao.options[selecao.selectedIndex].value;
               $('#solidario').val(valor);
-              var id = selecao.options[selecao.selectedIndex].data-id;
+              var id = selecao.options[selecao.selectedIndex].getAttribute("data-id");
               $('#assistido').val(id);
             }
           </script>
