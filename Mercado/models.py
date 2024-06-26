@@ -58,6 +58,7 @@ class ProdutoSolidario(models.Model):
     max_familia = models.IntegerField(default=0)
     codigo_solidario=models.CharField(max_length=13)
     essencial=models.BooleanField(default=False)
+    ativo=models.BooleanField(default=True)
     def __str__(self):
         return str(self.id_categoria) + " " + str(self.quantidade) + self.unidade 
     class Meta:

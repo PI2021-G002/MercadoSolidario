@@ -200,7 +200,7 @@ def iniciaRascunho(request):
                 return response
     rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
     itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+    produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
     context = {
        'rascunho':rascunho,
        'itens':itens,
@@ -230,7 +230,7 @@ def iniciaRascunhoCaixa(request):
                 return response
     rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
     itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+    produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
     context = {
        'rascunho':rascunho,
        'itens':itens,
@@ -280,7 +280,7 @@ def codigoMercado(request):
                 # sai da classe e volta na tela de scan com a mensagem
                 rascunho = AtendimentoRascunho.objects.get(id__exact=atendimento.id)   
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
                 context = {
                     'rascunho':rascunho,
                     'itens':itens,
@@ -313,7 +313,7 @@ def codigoMercado(request):
                     messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado. (qrok)")
                     rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                     itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-                    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                    produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
                     context = {
                     'rascunho':rascunho,
                     'itens':itens,
@@ -353,7 +353,7 @@ def codigoMercado(request):
                 messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado.")
                 rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
                 context = {
                     'rascunho':rascunho,
                     'itens':itens,
@@ -413,7 +413,7 @@ def codigoMercadoCaixa(request):
                 # sai da classe e volta na tela de scan com a mensagem
                 rascunho = AtendimentoRascunho.objects.get(id__exact=atendimento.id)   
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
                 context = {
                     'rascunho':rascunho,
                     'itens':itens,
@@ -446,7 +446,7 @@ def codigoMercadoCaixa(request):
                     messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado. (qrok)")
                     rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                     itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-                    produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                    produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
                     context = {
                     'rascunho':rascunho,
                     'itens':itens,
@@ -486,7 +486,7 @@ def codigoMercadoCaixa(request):
                 messages.error(request,"Produto não encontrado. Tente novamente. Se persistir, informe ao administrador do mercado.")
                 rascunho = AtendimentoRascunho.objects.get(id__exact=request.COOKIES.get('rascunho_id'))
                 itens = ItensAtendimentoRascunho.objects.filter(id_atendimento_id=rascunho.id)
-                produtoSolidario=ProdutoSolidario.objects.all().order_by('id_categoria','quantidade','unidade')
+                produtoSolidario=ProdutoSolidario.objects.all().filter(ativo=1).order_by('id_categoria','quantidade','unidade')
                 context = {
                     'rascunho':rascunho,
                     'itens':itens,
