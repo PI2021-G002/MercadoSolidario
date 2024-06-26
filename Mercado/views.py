@@ -504,6 +504,7 @@ def codigoMercadoCaixa(request):
         }
         return render(request, 'atendimentos/atendimentos_rascunho_caixa.html', {'context':context})
 
+@login_required
 def cancelarRascunho(request):
     # if this is a POST request we need to process the form data
     if request.method == 'GET':
@@ -515,6 +516,7 @@ def cancelarRascunho(request):
         messages.success(request, "Atendimento Cancelado com sucesso")
     return response
 
+@login_required
 def removerItem(request,id=0):
     # if this is a POST request we need to process the form data
     if request.method == 'GET':
@@ -522,6 +524,47 @@ def removerItem(request,id=0):
         ItensAtendimentoRascunho.objects.filter(id=id).delete()
         messages.success(request, "Item removido com sucesso")
     return response
+
+@login_required
+def aumentarItem(request,id):
+  item = ItensAtendimentoRascunho.objects.filter(id__exact=id).first()
+  produto = ProdutoSolidario.objects.filter(id=item.id_codigo.id).first()
+  quantidade = item.quantidade
+  max_fam = produto.max_familia
+  response = HttpResponseRedirect('../rascunho')
+  if quantidade + 1 <= max_fam:
+      item.quantidade = quantidade+1
+      item.save()
+      messages.success(request, "Item acrescido com sucesso")
+      return response
+  else:
+    messages.success(request, "Item já está no máximo permitido por família.")
+    return response
+
+@login_required
+def diminuirItem(request,id):
+  item = ItensAtendimentoRascunho.objects.filter(id__exact=id).first()
+  #produto = ProdutoSolidario.objects.filter(id_exact=item.id_produto)
+  quantidade = item.quantidade
+  response = HttpResponseRedirect('../rascunho')
+  if quantidade - 1 >= 1 :
+      item.quantidade = quantidade-1
+      item.save()
+      messages.success(request, "Item reduzido com sucesso")
+      return response
+  else:
+    messages.success(request, "Item já está no mínimo permitido por família.")
+    return response
+
+@login_required
+def alterarItem(request,id=0):
+    # if this is a POST request we need to process the form data
+    if request.method == 'GET':
+        response = HttpResponseRedirect('../rascunho')
+        ItensAtendimentoRascunho.objects.filter(id=id).delete()
+        messages.success(request, "Item removido com sucesso")
+    return response
+
 
 @login_required
 def concluirAtendimento(request):
@@ -660,4 +703,8 @@ def relatoriosNecessidadePeriodo(request):
         'estoques' : estoques
     }
     return render(request,'relatorios/necessidade_periodo.html',{ 'context': context })
+
+@login_required
+def relatorioAtendimentoVoluntario(request):
+    return True
 

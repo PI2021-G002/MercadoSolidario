@@ -63,9 +63,7 @@
             </thead>
             <tbody>
           {% for produto in context.produtoSolidario %}
-             <tr class="p-0"><td><button           
- class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-bd-cs{% else %}btn-outline-dark{% endif %}"
-
+             <tr class="p-0"><td><button class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-bd-cs{% else %}btn-outline-dark{% endif %}"
                 onclick="$('#codigo').val( '{{produto.codigo_solidario }}' ); $('#formCodigo').submit()" style="height:50px;width:100%;">
                 {{ produto }}  -  {{ produto.preco_solidario }} Solidário{% if produto.preco_solidario > 1 %}s{%endif%}
               </button>
@@ -152,8 +150,13 @@
                   <td class="qtd">{{ produto.quantidade }}</td>
                   <td class="sol">{{ produto.solidarios }}</td>
                   <td class="subtotal"><script>$()</script></td>
-                  <td><a href="removeritem/{{ produto.id }}">
-                    <div class="material-icons" >delete</div></a>
+                  <td>
+                    <a href="diminuiritem/{{ produto.id }}">
+                      <div class="material-icons" style="color:red;font-weight: 1000;">remove</div></a>
+                    <a href="removeritem/{{ produto.id }}">
+                      <div class="material-icons">delete</div></a>
+                    <a href="aumentaritem/{{ produto.id }}">
+                      <div class="material-icons" style="color:green;font-weight: 1000;">add</div></a>
                   </td>
                 </tr>
                 {% endfor %}
