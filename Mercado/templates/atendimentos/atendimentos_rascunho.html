@@ -43,6 +43,17 @@
       </button>
     </div>
   </div -->
+  <style>
+      .btn-bd-cs {
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: #e15e10;
+        --bs-btn-bg: none;
+        --bs-btn-border-color: #e15e10;
+        --bs-btn-hover-color: #00000;
+        --bs-btn-hover-bg: #e15e10;
+        --bs-btn-hover-border-color: #000;
+      }
+  </style>
   <div class="row overflow-auto border" style="margin-top:2em;margin-bottom: 4em;">
     <div style="max-height:450px; min-width: 300px;" class="row overflow-auto">
         <div class="text-center">Clique no item abaixo para adicioná-lo na lista</div>
@@ -52,7 +63,9 @@
             </thead>
             <tbody>
           {% for produto in context.produtoSolidario %}
-             <tr class="p-0"><td><button class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-outline-dark{% else %}btn-outline-info{% endif %}"
+             <tr class="p-0"><td><button           
+ class="btn btn-block {% if forloop.counter|divisibleby:2 %}btn-bd-cs{% else %}btn-outline-dark{% endif %}"
+
                 onclick="$('#codigo').val( '{{produto.codigo_solidario }}' ); $('#formCodigo').submit()" style="height:50px;width:100%;">
                 {{ produto }}  -  {{ produto.preco_solidario }} Solidário{% if produto.preco_solidario > 1 %}s{%endif%}
               </button>

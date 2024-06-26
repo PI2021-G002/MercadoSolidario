@@ -17,10 +17,10 @@ class CategoriaAdmin(admin.ModelAdmin):
 admin.site.register(Categoria,CategoriaAdmin)
 
 class ProdutoSolidarioAdmin(admin.ModelAdmin):
-    fields =['id_categoria','quantidade','unidade','preco_solidario','estoque_minimo','max_familia','essencial']
-    list_display = ('id_categoria','quantidade','unidade','estoque_minimo','preco_solidario','max_familia','essencial','codigo_solidario')
+    fields =['id_categoria','quantidade','unidade','preco_solidario','estoque_minimo','max_familia','essencial','ativo']
+    list_display = ('id_categoria','quantidade','unidade','estoque_minimo','preco_solidario','max_familia','essencial','codigo_solidario','ativo')
     createonly_fields = ['id_categoria','quantidade','unidade' ]
-    ordering = ['id_categoria','quantidade','unidade']
+    ordering = ['id_categoria','quantidade','unidade','ativo']
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = list(super(ProdutoSolidarioAdmin, self).get_readonly_fields(request, obj))
