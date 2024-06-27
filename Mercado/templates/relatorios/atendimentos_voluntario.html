@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <h2>Relatório de atendimentos por voluntário - Mercado Solidário CS</h2>
+    </div>
+  </div>
+</div>
+<div class="container mt-2 mb-4 border">
+    <form method="POST" class="row align-items-end justify-content-center py-2">
+      {% csrf_token %}
+      <h3>Escolha as Datas de início e final. (padrão, mês corrente)</h3>
+      <div id="inicio-picker" class="col">
+        <div>Data Inicial</div>
+        <input id="inicial" name="inicial" type="text" value='{{ context.inicial|date:"d/m/Y" }}'>
+      </div>
+      <div id="final-picker" class="col">
+        <div>Data Final</div>
+        <input id="final" name="final" type="text" value='{{ context.final|date:"d/m/Y"  }}'>
+      </div>
+      <div class="col mt-2">
+        <button class="btn btn-outline-info" type="submit">Gerar Relatório</button>
+      </div>
+    </form>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <table id="tbAtendimentos" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+        <thead> 
+                <tr>
+                    <th scope="col" style="text-align:center;">Atendente</th>
+                    <th scope="col" style="text-align:center;">Quantidade</th>
+                    <th scope="col" style="text-align:center;">Tempo Medio (minutos)</th>
+                    <th scope="col" style="text-align:center;">Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for atendimento in context.atendimentos %}
+                <tr>
+                    <td>{{ atendimento.atendente}}</td>
+                    <td style="text-align:center;">{{ atendimento.quantidade }}</td>
+                    <td style="text-align:center;">{{ atendimento.tempo_medio }}</td>
+                    <td style="text-align:center;">{{ atendimento.tipo }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+         <script lang="javascript">
+            $(document).ready( function () {
+                var table = $('#tbAtendimentos').DataTable( {
+                    language: {
+                    url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                    },
+                    responsive : true
+                } )
+                .columns.adjust()
+                .responsive.recalc();
+
+            } );
+            // https://bootstrap-datepicker.readthedocs.io/en/latest/
+            inicio_div = $('#inicio-picker input').datepicker({
+              autoclose: true,
+              format: 'dd/mm/yyyy',
+            }).on('changeDate', function(e) {
+               // `e` here contains the extra attributes
+               $('#final-picker input').datepicker('clearDates');
+               
+            });
+            final_div = $('#final-picker input').datepicker({
+              autoclose: true,
+              format: 'dd/mm/yyyy'
+            })    
+        </script>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock conteudo %}
