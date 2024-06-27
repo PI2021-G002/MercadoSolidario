@@ -26,10 +26,14 @@ urlpatterns = [
     path('Atendimento/codigoCaixa',codigoMercadoCaixa,name='Rascunho Mercado Caixa'),
     path('Atendimento/cancelar',cancelarRascunho,name='Rascunho Mercado'),    
     path('Atendimento/removeritem/<int:id>',removerItem,name='remover Item rascunho'),
+    path('Atendimento/aumentaritem/<int:id>',aumentarItem,name='Aumentar Item rascunho'),
+    path('Atendimento/diminuiritem/<int:id>',diminuirItem,name='Diminuir Item rascunho'),
     path('Atendimento/concluir',concluirAtendimento,name='remover Item rascunho'),
     path('Atendimento/cestabasica',emDesenvolvimento,name='cesta básica'),
     path('Atendimento/cestaemergencial',emDesenvolvimento,name='cesta básica'),
     path('Relatorios',TemplateView.as_view(template_name='relatorios/relatorios.html'),name='Relatórios'),
     path('Relatorios/consumo-periodo',relatoriosConsumoPeriodo,name='Consumo por Período'),
-    path('Relatorios/necessidade-periodo',relatoriosNecessidadePeriodo,name='Necessidade por Período')
+    path('Relatorios/necessidade-periodo',relatoriosNecessidadePeriodo,name='Necessidade por Período'),
+    path('Relatorios/atendimentosvoluntario',relatorioAtendimentoVoluntario,name='Atendimentos por Voluntario')
+
 ]

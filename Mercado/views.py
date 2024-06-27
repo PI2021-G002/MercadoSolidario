@@ -504,6 +504,7 @@ def codigoMercadoCaixa(request):
         }
         return render(request, 'atendimentos/atendimentos_rascunho_caixa.html', {'context':context})
 
+@login_required
 def cancelarRascunho(request):
     # if this is a POST request we need to process the form data
     if request.method == 'GET':
@@ -515,6 +516,7 @@ def cancelarRascunho(request):
         messages.success(request, "Atendimento Cancelado com sucesso")
     return response
 
+@login_required
 def removerItem(request,id=0):
     # if this is a POST request we need to process the form data
     if request.method == 'GET':
@@ -522,6 +524,47 @@ def removerItem(request,id=0):
         ItensAtendimentoRascunho.objects.filter(id=id).delete()
         messages.success(request, "Item removido com sucesso")
     return response
+
+@login_required
+def aumentarItem(request,id):
+  item = ItensAtendimentoRascunho.objects.filter(id__exact=id).first()
+  produto = ProdutoSolidario.objects.filter(id=item.id_codigo.id).first()
+  quantidade = item.quantidade
+  max_fam = produto.max_familia
+  response = HttpResponseRedirect('../rascunho')
+  if quantidade + 1 <= max_fam:
+      item.quantidade = quantidade+1
+      item.save()
+      messages.success(request, "Item acrescido com sucesso")
+      return response
+  else:
+    messages.success(request, "Item já está no máximo permitido por família.")
+    return response
+
+@login_required
+def diminuirItem(request,id):
+  item = ItensAtendimentoRascunho.objects.filter(id__exact=id).first()
+  #produto = ProdutoSolidario.objects.filter(id_exact=item.id_produto)
+  quantidade = item.quantidade
+  response = HttpResponseRedirect('../rascunho')
+  if quantidade - 1 >= 1 :
+      item.quantidade = quantidade-1
+      item.save()
+      messages.success(request, "Item reduzido com sucesso")
+      return response
+  else:
+    messages.success(request, "Item já está no mínimo permitido por família.")
+    return response
+
+@login_required
+def alterarItem(request,id=0):
+    # if this is a POST request we need to process the form data
+    if request.method == 'GET':
+        response = HttpResponseRedirect('../rascunho')
+        ItensAtendimentoRascunho.objects.filter(id=id).delete()
+        messages.success(request, "Item removido com sucesso")
+    return response
+
 
 @login_required
 def concluirAtendimento(request):
@@ -660,4 +703,38 @@ def relatoriosNecessidadePeriodo(request):
         'estoques' : estoques
     }
     return render(request,'relatorios/necessidade_periodo.html',{ 'context': context })
+
+@login_required
+def relatorioAtendimentoVoluntario(request):
+    if request.method == 'GET':
+      # Se for o primeiro GET (a partir do menu) mostra o relátorio do mês corrente
+      #https://stackoverflow.com/questions/37396329/finding-first-day-of-the-month-in-python
+      #https://www.tutorialspoint.com/number-of-days-in-a-month-in-python#:~:text=Practical%20Data%20Science%20using%20Python&text=Suppose%20we%20have%20one%20year,then%20the%20result%20is%2029.&text=if%20m%20is%20in%20the,31%2C%20otherwise%2C%20return%2030.
+      inicial = datetime.today().replace(day=1)
+      final  = datetime.today().replace(day=numberOfDays( inicial.year,inicial.month ))
+    else:
+      # se for um POST
+      inicial = datetime.strptime(request.POST.__getitem__('inicial'), '%d/%m/%Y').date()
+      final  = datetime.strptime(request.POST.__getitem__('final'), '%d/%m/%Y').date()
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'select s.atendente, count(s.atendente) as quantidade, ceiling(avg((tempo_min*60)+tempo_sec)/60) as tempo_medio \
+             from (select atendente, \
+                          floor((data_hora_termino - data_hora_inicio)/60) as tempo_min, \
+                          ceiling(mod((data_hora_termino - data_hora_inicio)/60,1)*60) as tempo_sec \
+                          from mercado_atendimento \
+                          where data_hora_inicio is not null and data_hora_termino is not null and \
+                          data >= \''+ str(inicial) +'\' and data<=\''+ str(final) +
+                          '\') s group by atendente order by atendente'
+            )
+        row = cursor.fetchall()
+        atendimentos = fromCursorToTableData(cursor, row)
+
+    context = {
+        'atendimentos' : atendimentos,
+        'inicial': inicial,
+        'final': final,
+    }
+    return render(request,'relatorios/atendimentos_voluntario.html',{ 'context': context })
 
