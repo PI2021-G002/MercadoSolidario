@@ -719,14 +719,12 @@ def relatorioAtendimentoVoluntario(request):
 
     with connection.cursor() as cursor:
         cursor.execute(
-            'select s.atendente, count(s.atendente) as quantidade, ceiling(avg((tempo_min*60)+tempo_sec)/60) as tempo_medio \
-             from (select atendente, \
-                          floor((data_hora_termino - data_hora_inicio)/60) as tempo_min, \
-                          ceiling(mod((data_hora_termino - data_hora_inicio)/60,1)*60) as tempo_sec \
-                          from mercado_atendimento \
-                          where data_hora_inicio is not null and data_hora_termino is not null and \
-                          data >= \''+ str(inicial) +'\' and data<=\''+ str(final) +
-                          '\') s group by atendente order by atendente'
+            'select atendente, count(atendente) as quantidade,  \
+                avg(timestampdiff(MINUTE,data_hora_inicio,data_hora_termino)) as tempo_medio \
+                from mercado_atendimento \
+                where data_hora_inicio is not null and data_hora_termino is not null and \
+                data >= \''+ str(inicial) +'\' and data<=\''+ str(final) +
+                '\' group by atendente order by atendente'
             )
         row = cursor.fetchall()
         atendimentos = fromCursorToTableData(cursor, row)
