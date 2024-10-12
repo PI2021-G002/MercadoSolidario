@@ -116,19 +116,33 @@
   </div>
   <div class="row justify-content-center">       
     <div class="mt-2 col-auto">
-        <button type="submit" class="btn btn-primary text-center center mt-2">Continuar</button>
+        <button id="btn-continue" type="submit" class="btn btn-primary text-center center mt-2">Continuar</button>
     </div>
     </form>
+  </div>
+  <div class="row justify-content-center">       
+    <div class="mt-2 col-auto">
+        <button id="btn-voltar" class="btn btn-warning text-center center mt-2" onclick="history.back();">Voltar</button>
+    </div>
   </div>
   <div>
 
       <script>
         $(function(){
             $('#id_quantidade').change(function(){
+               $('#btn-continue').prop('disabled', false);
                var id_sol = parseFloat($('#id_solidarios').val()) || 0;
                var quantidade = parseFloat($('#id_quantidade').val()) || 0;
                var solidarios = parseFloat($('#solidarios').html()) || 0;
-               $('#restantes').html(solidarios - (id_sol*quantidade));
+               var restante = solidarios - (id_sol*quantidade);
+               if(restante >=0){
+                 $('#restantes').html(restante);
+               }
+               else {
+                $('#btn-continue').prop('disabled', true);
+
+                alert("Saldo insuficiente para adicionar item.");
+               };
             });
             $('#id_quantidade').attr("max",$('#id_max_fam').val() )        });
         $(function(){ 
