@@ -2,11 +2,9 @@ from asyncio.proactor_events import _ProactorBasePipeTransport
 from copy import copy
 from doctest import testfile
 from email import message
-from imp import acquire_lock
 from unittest import result
 from django.shortcuts import render
 from django.utils.formats import date_format
-from pkg_resources import require
 from .models import *
 from django.db.models import Q,F,Sum
 from django.shortcuts import render, redirect
